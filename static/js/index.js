@@ -1,7 +1,7 @@
 var username, socket = io();
 
 function getMessages() {
-    fetch('./api/chat')
+    fetch('./api/messages')
         .then(response => response.json())
         .then(data => {
             addMessages(data)
@@ -31,7 +31,7 @@ function addMessages(messages) {
 socket.on('message', addMessage)
 
 function sendMessage(username, content) {
-    fetch('./api/send', {
+    fetch('./api/messages', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
