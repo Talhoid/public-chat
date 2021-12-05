@@ -1,107 +1,118 @@
-var username, socket = io();
+var chatBox = document.querySelector(".chat-box");
+var socket = io();
+var input = document.getElementById("send-messages").children[0];
+var button = document.getElementById("send-messages").children[1];
+var messageGroup = document.getElementById("send-messages");
+getUsername();
 
-function getMessages() {
-    fetch('./api/chat')
-        .then(response => response.json())
-        .then(data => {
-            addMessages(data)
-        })
-}
+
+function updateTyping() {
+    if (connected) {
+      if (!typing) {
+        typing = true;
+        socket.emit('typing');
+      }
+      lastTypingTime = (new Date()).getTime();
+
+      setTimeout(() => {
+        const typingTimer = (new Date()).getTime();
+        const timeDiff = typingTimer - lastTypingTime;
+        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+          socket.emit('stop typing');
+          typing = false;
+        }
+      }, TYPING_TIMER_LENGTH);
+    }
+  }
 
 function addMessage(message) {
-    var messageNodeList = document.createDocumentFragment();
-    var messageElement = document.createElement('div')
-    messageElement.className = "message"
-    var usernameElement = document.createElement('p')
-    usernameElement.className = "username"
-    usernameElement.textContent = message.username
-    var contentElement = document.createElement('p')
-    contentElement.textContent = message.message
-    contentElement.className = "content";
-    messageNodeList.appendChild(usernameElement)
-    messageNodeList.appendChild(contentElement)
-    messageElement.appendChild(messageNodeList)
-    document.querySelector('div#chat').appendChild(messageElement);
+    document.getElementById("nothing-to-see").style.display = "none";
+    var htmlString = `<div class="w-100 float-start text-light" data-messageid="${message.id}"><div class="border rounded-3 border-${message.username == username ? "primary" : "secondary"} p-4 bg-opacity-50${message.username == username ? " float-end" : ""} my-2" style="width: fit-content;"><strong><small>${message.username}</small></strong><br /><p class="mb-0">${message.content}</p></div></div>`;
+    var messageElement = new DOMParser().parseFromString(htmlString, "text/html").body.firstChild;
+    console.log("Adding message: ", message)
+    chatBox.appendChild(messageElement);
 }
 
 function addMessages(messages) {
     messages.forEach(addMessage)
 }
 
-socket.on('message', addMessage)
-
-function sendMessage(username, content) {
-    fetch('./api/send', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: username,
-            message: content
-        })
-    })
+async function getMessages() {
+    var messages = await fetch("./chat/messages/");
+    messages = await messages.json();
+    document.getElementById("chat-loader").remove();
+    if (!messages.length) {
+        document.getElementById("nothing-to-see").style.display = "block";
+    }
+    addMessages(messages);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
-
-getMessages();
-
-function setUsernameEventHandler(event) {
-    if (!!event.target.previousElementSibling.value) {
-        localStorage.setItem('username', event.target.previousElementSibling.value)
-        event.target.parentElement.remove()
-        username = localStorage.getItem('username');
-        document.querySelector('.username').style.display = '';
-        document.querySelector('.username').querySelector('#username-box').textContent = username;
+async function getUsername() {
+    var username = await fetch("./username/");
+    username = await username.json();
+    if (username.error == "logged_out") {
+        input.setAttribute("disabled", "")
+        button.setAttribute("disabled", "")
+        button.classList.add("disabled");
+        messageGroup.tooltip = new bootstrap.Tooltip(messageGroup.parentElement, {title: "You must be logged in to chat.",  container:"body"});
+        window.username = "";
     } else {
-        document.getElementById('error').textContent = 'Put something inside of that box, idiot.'
-        setTimeout(function() {
-            document.getElementById('error').textContent = ''
-        }, 3000);
+        username = username.username;
+        window.username = username;
+        document.getElementById("login-register").remove();
+    }
+    return username;
+}
+
+function sendMessage(content) {
+    if (content) {
+        fetch("/chat/add", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        });
     }
 }
 
-function usernameInputEventHandler(event) {
-    if (event.keyCode === 13) {
-        document.getElementById('username-btn').click();
+input.addEventListener("keydown", (event) => {
+    if (event.code === "Enter" && event.target.value) {
+        console.log("down");
+        button.click();
     }
-}
+});
 
-function messageInputEventHandler(event) {
-    if (event.keyCode === 13 && !!document.getElementById('message-input').value) {
-        document.getElementById('message-btn').click();
+button.addEventListener("click", (event) => {
+    if (input.value) {
+        sendMessage(input.value);
+        input.value = "";
     }
-}
-
-function sendMessageEventHandler(event) {
-    if (!!username && !!document.getElementById('message-input').value) {
-        sendMessage(username, document.getElementById('message-input').value)    
-        document.getElementById('message-input').value = '';
-    } else {
-        document.getElementById('error').textContent = 'Set your username. -_-'
-        setTimeout(function() {
-            document.getElementById('error').textContent = ''
-        }, 3000);
-    }
-}
+});
 
 
-document.getElementById('username-btn').addEventListener('click', setUsernameEventHandler)
-document.getElementById('username-input').addEventListener('keydown', usernameInputEventHandler)
-document.getElementById('message-input').addEventListener('keydown', messageInputEventHandler)
-document.getElementById('message-btn').addEventListener('click', sendMessageEventHandler)
+socket.on("message", addMessage);
 
+setInterval(function () {
+    var zoom = detectZoom.device().toFixed(2);
+    // console.info("Zoom: " + detectZoom.device().toFixed(2).toString())
+    setTimeout(function () {
+        if (detectZoom.device().toFixed(2) != zoom) {
+            var realBox = document.body.appendChild(chatBox.cloneNode(false));
+            realBox.style.visibility = "hidden";
+            realBox.style.maxHeight = "";
+            chatBox.style.maxHeight = getComputedStyle(realBox).height;
+            realBox.remove();
+        }
+    }, 1)
+}, 2);
 
-function checkUsername() {
-    if (!!localStorage.getItem('username')) {
-        username = localStorage.getItem('username');
-        document.querySelector('.username-input-wrapper').remove();
-        document.querySelector('.username').style.display = '';
-        document.querySelector('.username').querySelector('#username-box').textContent = username;
-    } else {
-        document.querySelector('.username').style.display = 'none';
-    }
-}
-
-checkUsername()
+var realBox = document.body.appendChild(chatBox.cloneNode(false));
+realBox.style.visibility = "hidden";
+realBox.style.maxHeight = "";
+chatBox.style.maxHeight = getComputedStyle(realBox).height;
+realBox.remove();
+setTimeout(getMessages, 1500);

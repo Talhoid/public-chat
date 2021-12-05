@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "username": "Talhoid",
+      "password": "$2a$10$l2x6VH0JpxAuZrmi8WtiC.04.YKoqE.xjjESXkrFah/urZTEZnH5S",
+      "id": "eb43595479657d692247caf12a1b66e6"
+    },
+    {
+      "username": "aakif",
+      "password": "$2a$10$QGsR7P1tQpR9HcJ18/VvGOb.tqIlEC69mEh.DBO5zL.7QOn1GzaTi",
+      "id": "e21e6e9ac60f52a760a6db0912da2453"
+    }
+  ],
+  "chat": [
+    {
+      "content": "hello",
+      "username": "aakif",
+      "id": "1c1034c58bbbc96b34002ad77c4520ef"
+    },
+    {
+      "content": "how it goes",
+      "username": "aakif",
+      "id": "23743bcc545442bb76f44d74a746402d"
+    },
+    {
+      "content": "garlic",
+      "username": "Talhoid",
+      "id": "155aeebea8251bc845d67b752bc151b6"
+    },
+    {
+      "content": "garloc bread",
+      "username": "Talhoid",
+      "id": "323591e06a2dfc5d90290438c18103ad"
+    }
+  ]
+}

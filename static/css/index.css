@@ -1,113 +1,46 @@
 
-body {
-	background-color: lightgray;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
-}
-div.chat-box {
-	border: 2px solid darkslategray;
-	border-radius: 3px;
-	padding: 8px;
-	width: 25%;
-	min-height: 60%;
-	height: 60%;
-	display: inline-block;
-	position: absolute;
-	top: 50%;
-    left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	-ms-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-	clear: both;
-    overflow: auto;
-}
-div.message {
-	display: block;
-	margin: 0;
-}
-div.message>p {
-	margin: 0;
-	font-size: 75%;
-	display: inline;
-}
-div.message>p.username::after {
-	content: ' : ';
-}
-body input.input {
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	border: none;
-	background: none;
-	padding: 8px;
-	width: calc(100% - (8px * 8.9));
-	font-family: inherit;
-    height: fit-content;
-}
-div.username-input-wrapper>input.input {
-	position: relative;
-	left: unset;
-	bottom: unset;
-	border: none;
-	background: none;
-	padding: 8px;
-	width: calc(100% - 8px * 2.5);
-	font-family: inherit;
-}
-body input.input:focus {
-	outline: 0;
-	border: 2px solid gray;
-	border-radius: 3px;
-}
-body input.input::placeholder {
-	font-style: italic;
-	font-family: inherit;
-}
-div.username-input-wrapper {
-	width: 10%;
-	position: relative;
-	margin: 0 auto;
-}
-button.btn:hover,button.btn:focus {
-	background-color: green;
-	outline: 0;
-}
-button.btn {
-	transition: all .3s ease;
-	font-family: inherit;
-	display: inline-block;
-	width: 100%;
-	background-color: limegreen;
-	border: 2px solid green;
-	border-radius: 3px;
-	cursor: pointer;
-	padding: 8px;
-}
-p.error {
-	font-style: italic;
-	color: red;
-	text-align: center;
-	font-size: 75%;
-}
-p.username {
-	text-align: center;
-}
-div.chat-wrapper {
-	height: 100%;
+
+/* https://ishadeed.com/article/custom-scrollbars-css/ */
+/* Modified a little */
+.chat-box::-webkit-scrollbar {
+  width: 20px;
 }
 
-div.button-wrapper {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    height: fit-content;
+.chat-box::-webkit-scrollbar-track {
+  background-color: var(--bs-body-bg);
+  border-radius: 100px;
 }
 
-div.input-wrapper {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: 25%;
-    height: 1%;
+.chat-box::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  border: 5px solid transparent;
+  background-clip: content-box;
+  background-color: var(--bs-secondary);
+}
+
+body, :root {
+    height: 100%;
+    width: 100%;
+}
+
+.full-screen-div {
+    width: 100vw;
+    height: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+
+
+.merge-up, .merge-up > *:not(div) {
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+}
+
+.merge-down, .merge-down > *:not(div) {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
