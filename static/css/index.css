@@ -1,26 +1,43 @@
-
-
 /* https://ishadeed.com/article/custom-scrollbars-css/ */
 /* Modified a little */
 .chat-box::-webkit-scrollbar {
-  width: 20px;
+    width: 20px;
 }
 
 .chat-box::-webkit-scrollbar-track {
-  background-color: var(--bs-body-bg);
-  border-radius: 100px;
+    background-color: var(--bs-body-bg);
+    border-radius: 100px;
 }
+
+.hljs {
+    background: #222 !important;
+}
+
 
 .chat-box::-webkit-scrollbar-thumb {
-  border-radius: 100px;
-  border: 5px solid transparent;
-  background-clip: content-box;
-  background-color: var(--bs-secondary);
+    border-radius: 100px;
+    border: 5px solid transparent;
+    background-clip: content-box;
+    background-color: var(--bs-secondary);
 }
 
-body, :root {
+body,
+:root {
     height: 100%;
     width: 100%;
+}
+
+.d-spoiler {
+    background-color: var(--spoiled-bg ,black) !important;
+    border-radius: 0.3rem !important;
+    color: var(--spoiled-color, transparent);
+    transition: all .3s !important;
+}
+
+.d-spoiler:hover {
+    --spoiled-bg: transparent;
+    --spoiled-color: rgba(255,255,255,.7);
+    border-radius: 0px !important;
 }
 
 .full-screen-div {
@@ -32,15 +49,50 @@ body, :root {
     overflow-y: hidden;
 }
 
-
-
-.merge-up, .merge-up > *:not(div) {
+.merge-up,
+.merge-up > *:not(div) {
     border-top-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
 }
 
-.merge-down, .merge-down > *:not(div) {
+.merge-down,
+.merge-down > *:not(div) {
     margin-bottom: -1px;
     border-bottom-right-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
+}
+
+
+/* From cloudflare */
+.text-typing {
+    background-color: var(--bs-secondary);
+    height: 10px;
+    width: 10px;
+    border-radius: 100%;
+    display: inline-block;
+    margin: 2px;
+    animation: fader 1.6s infinite;
+}
+
+div.loader > .text-typing:nth-child(2) {
+    animation-delay: .2s;
+}
+
+div.loader > .text-typing:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes fader {
+    0% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
 }

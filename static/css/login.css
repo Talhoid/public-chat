@@ -1,7 +1,7 @@
 html,
 body {
   height: 100%;
-  background-color: var(--bs-dark);
+  background-color: var(--bs-body-bg);
 }
 
 body {
@@ -9,7 +9,7 @@ body {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: var(--bs-dark);
+  background-color: var(--bs-body-bg);
 }
 
 .form-login {
@@ -28,7 +28,7 @@ body {
 }
 
 .form-login input{
-    background-color: var(--bs-dark) !important;
+    background-color: var(--bs-body-bg) !important;
 }
 
 .form-login input[type="text"] {

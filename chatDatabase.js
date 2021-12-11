@@ -1,15 +1,19 @@
-// const JSONFileAPI = require("edit-json-file");
+    // const JSONFileAPI = require("edit-json-file");
 const crypto = require("crypto");
 const autoSave = require('save-on-change');
 const path = require("path");
+const { toHTML } = require('discord-markdown');
+const Filter = require('./bad-words-fixed'),
+    filter = new Filter({placeHolder: "\\*"});
 class Database {
     constructor(database) {
         this.database = database;
     }
     // thx nikki https://dev.to/nikkimk/converting-utf-including-emoji-to-html-x1f92f-4951
     utf2Html(str) {
-        return [...str].map((char) => char.codePointAt() > 127 || Array.from("<>&;#'\"").includes(char) ? `&#${char.codePointAt()};` : char).join('');
+        return [...str].map((char) => char.codePointAt() > 127 ? `&#${char.codePointAt()};` : char).join('');
     }
+
 
     addUser(userObj) {
         userObj.id = crypto.randomBytes(16).toString("hex");
@@ -30,12 +34,20 @@ class Database {
     // }
 
     findUser(username) {
+        if (!!!this.database.users) {
+            this.database.users = [];
+        }
         return this.database.users.find(user => user.username === username);
+    }
+
+    findMessage(id) {
+        return this.database.chat.find(message => message.id === id)
     }
 
     addMessage(messageObj) {
         messageObj.id = crypto.randomBytes(16).toString("hex");
-        messageObj.content = this.utf2Html(messageObj.content)
+        messageObj.content = this.utf2Html(toHTML(filter.cleanHacked(messageObj.content)));
+
         if (!!this.database.chat) {
             this.database.chat.push(messageObj);
         } else {
@@ -48,10 +60,18 @@ class Database {
     getMessages() {
         return this.database.chat;
     }
+
+    deleteMessage(id) {
+        var originalMessage = this.findMessage(id); 
+        this.database.chat = this.database.chat.filter(message => {
+            return message.id != id;
+        });
+        return originalMessage;
+    }
 }
 
-async function connect(databasePath) {
-    console.log(`[${path.basename(__dirname)}] loading ${databasePath}`)
+function connect(databasePath) {
+    console.log(`[${path.basename(__filename)}] loading ${databasePath}`)
     var finalDatabase = new Database(autoSave(databasePath));
     return finalDatabase;
 }

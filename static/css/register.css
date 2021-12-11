@@ -1,7 +1,7 @@
 html,
 body {
   height: 100%;
-  background-color: var(--bs-dark);
+  background-color: var(--bs-body-bg);
 }
 
 body {
@@ -9,42 +9,42 @@ body {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: var(--bs-dark);
+  background-color: var(--bs-body-bg);
 }
 
-.form-login {
+.form-register {
   width: 100%;
   max-width: 330px;
   padding: 15px;
   margin: auto;
 }
 
-.form-login .checkbox {
+.form-register .checkbox {
   font-weight: 400;
 }
 
-.form-login .form-floating:focus-within {
+.form-register .form-floating:focus-within {
   z-index: 2;
 }
 
-.form-login input{
-    background-color: var(--bs-dark) !important;
+.form-register input{
+    background-color: var(--bs-body-bg) !important;
 }
 
-.form-login div.form-floating:nth-of-type(1) input{
+.form-register div.form-floating:nth-of-type(1) input{
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-login div.form-floating:nth-last-of-type(1) input {
+.form-register div.form-floating:nth-last-of-type(1) input {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
 
-.form-login div.form-floating:not(:nth-of-type(1)):not(:nth-last-of-type(1)) input{
+.form-register div.form-floating:not(:nth-of-type(1)):not(:nth-last-of-type(1)) input{
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: 0;
