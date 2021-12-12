@@ -16,7 +16,6 @@ const path = require("path");
 const fs = require('fs');
 const minify = require('express-minify');
 
-
 app.use(timeout(5000));
 app.use(haltOnTimedout);
 
@@ -39,6 +38,10 @@ const cookieOptions = {
 };
 
 
+app.use('/css/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
+app.use('/css/bootstrap-dark', express.static(path.join(__dirname, 'node_modules/bootstrap-dark-5/dist/css')))
+
+
 const JSONDB = require("./chatDatabase.js")
 
 var db = JSONDB.connect("./chat/database.json");
@@ -58,6 +61,11 @@ pingCounts = 0
 //     void (isHtml ? res.render(filename.replace(".html", "") + ".html") : undefined)
 //     return next();
 // });
+
+// app.use(minify({
+//     uglifyJsModule: uglifyJs
+// }));
+
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 app.set("views", "static");
@@ -91,10 +99,6 @@ app.use((req, res, next) => {
     res.header("Access-Control-Expose-Headers", "*")
     next();
 });
-
-app.use(minify({
-    uglifyJsModule: uglifyJs
-}));
 
 
 
@@ -195,16 +199,16 @@ app.post("/register/submit", bodyParser.urlencoded({ extended: true }), async (r
 })
 
 app.get("/chat/messages", (req, res) => {
-    res.json(db.getMessages());
+    return res.json(db.getMessages());
 });
 
 app.get("/username", (req, res) => {
     return res.status(req.signedCookies.username ? 200 : 403).json(req.signedCookies.username ? { username: req.signedCookies.username } : { error: "logged_out" });
 });
 
-app.post("/chat/add", auth, bodyParser.json(), (req, res) => {
+app.post("/chat/add", auth.verifyToken, bodyParser.json(), (req, res) => {
     const { content } = req.body;
-    if (!!content && content.length <= 500) {
+    if (!!content && /^(?!\s*$).+/g.test(content) && content.length <= 500) {
         console.log(`Message: ${content}`)
         var message = db.addMessage({
             content: content.replace(/^\s*$(?:\r\n?|\n)/gm, ""),
@@ -213,7 +217,7 @@ app.post("/chat/add", auth, bodyParser.json(), (req, res) => {
 
         io.emit("message", message);
         return res.json(message);
-    } else if (!!content) {
+    } else if (!(!!content && /^(?!\s*$).+/g.test(content))) {
         return res.status(400).json({
             "message": "No content in body.",
             "error": "content_required"
@@ -226,7 +230,7 @@ app.post("/chat/add", auth, bodyParser.json(), (req, res) => {
     }
 });
 
-app.delete("/chat/delete", auth, bodyParser.json(), (req, res) => {
+app.delete("/chat/delete", auth.verifyToken, bodyParser.json(), (req, res) => {
     const { id } = req.body;
     if (!(/^[0-9a-f]{32}$/g.test(id))) {
         return res.status(400).json({
@@ -234,8 +238,8 @@ app.delete("/chat/delete", auth, bodyParser.json(), (req, res) => {
             "error": "malformed_id"
         });
     }
-    const message = db.findMessage(id); 
-    if (message.username != req.signedCookies.username) {
+    const message = db.findMessage(id) || {};
+    if (message.username != req.signedCookies.username && !db.checkAdmin(req.signedCookies.username)) {
         return res.status(403).json({
             "message": "Insufficient permissions.",
             "error": "insufficient_perms"
@@ -244,6 +248,29 @@ app.delete("/chat/delete", auth, bodyParser.json(), (req, res) => {
     io.emit("message remove", id);
     return res.json(db.deleteMessage(id));
 });
+
+app.delete("/chat/purge", auth.verifyToken, auth.verifyAdmin(db), bodyParser.json(), (req, res) => {
+    const messages = db.getMessages();
+    for (const message of messages) {
+        io.emit("message remove", message.id);
+    }
+    return res.json({
+        chat: db.purgeMessages()
+    });
+});
+
+app.get("/admin", (req, res) => {
+    return res.json({
+        admin: db.checkAdmin(req.signedCookies.username)
+    });
+});
+
+app.delete("/users/purge", auth.verifyToken, auth.verifyAdmin(db), bodyParser.json(), (req, res) => {
+    return res.json({
+        users: (db.purgeUsers.bind(db))()
+    });
+});
+
 
 io.on("connection", (socket) => {
     let usernameSet = false;

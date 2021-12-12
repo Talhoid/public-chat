@@ -1,19 +1,20 @@
 {
   "name": "public-chat",
   "version": "1.0.0",
-  "description": "",
+  "description": "A public chat.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "@Talhoid",
   "license": "ISC",
   "dependencies": {
     "babel-minify": "^0.5.1",
     "bad-words": "^3.0.4",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "bootstrap-dark-5": "^1.1.3",
     "connect-timeout": "^1.9.0",
     "cookie-parser": "^1.4.6",
     "discord-markdown": "^2.5.1",

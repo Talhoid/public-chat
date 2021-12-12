@@ -23,4 +23,19 @@ const verifyToken = (req, res, next) => {
   return next();
 };
 
-module.exports = verifyToken;
+const verifyAdmin = (database) => {
+    return (req, res, next) => {
+        if (!database.checkAdmin(req.signedCookies.username)) {
+            return res.status(403).json({
+                message: "User is not an admin.",
+                error: "not_admin"
+            });
+        }
+        next();
+    }
+}
+
+module.exports = {
+    verifyToken,
+    verifyAdmin
+};

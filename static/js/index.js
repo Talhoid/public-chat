@@ -2,16 +2,55 @@ function main() {
 	var chatBox = document.querySelector(".chat-box");
 	var socket = io();
 	var input = document.getElementById("send-messages").children[0];
-	var button = document.getElementById("send-messages").children[1];
+	var button = document.getElementById("send-messages").children[3];
 	var messageGroup = document.getElementById("send-messages");
 	var isTyping = false;
 	var typersElement = document.getElementById("username-list");
 	var typersMessage = document.getElementById("typing-message");
 	var typersLoader = document.querySelector(".loader");
 	var typers = [];
+    var purgeMessagesBtn = document.getElementById("button-purge-messages");
+    var purgeUsersBtn = document.getElementById("button-purge-users");
+    var areYouSureSubmit = document.getElementById("areYouSureSubmit");
+    var areYouSureModal = document.getElementById("areYouSure");
+    areYouSureModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var message = button.getAttribute('data-bs-message');
+        var type = button.getAttribute('data-bs-type');
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var modalBody = areYouSureModal.querySelector('.modal-body');
+        var modalButton = areYouSureModal.querySelector(".modal-footer button.btn-danger");
+        modalButton.dataset.purgeType = type;
+        modalBody.textContent = message;
+    });
+    areYouSureSubmit.addEventListener("click", event => {
+        purge(event.target.dataset.purgeType); 
+    });
+    window.messagesList = [];
 	const TYPING_TIMER_LENGTH = 1400;
 	getUsername();
 
+    function purge(type) {
+        switch (type) {
+            case "users":
+                console.log("purge", type);
+                fetch("/users/purge", {
+                    method: "DELETE"
+                });
+                break;
+            case "messages":
+                console.log("purge", type);
+                fetch("/chat/purge", {
+                    method: "DELETE"
+                });
+                break;
+        }
+    }
 
     String.prototype.toDOM=function(){
         var d=document
@@ -44,28 +83,37 @@ function main() {
 		}, TYPING_TIMER_LENGTH);
 	}
 
+    function changeTag(el, tag){
+        var parent = el.parentNode,newElem = document.createElement(tag);
+        newElem.innerHTML = el.value || el.innerHTML
+        parent.replaceChild(newElem, el);
+        return newElem;
+    }
+
 	function addMessage(message) {
+        messagesList.push(message);
 		document.getElementById("nothing-to-see").style.display = "none";
-		var htmlString = `<div class="w-100 float-start text-light" data-username="${message.username}" data-message-id="${message.id}">
+		var htmlString = `<div class="w-100 float-start" data-username="${message.username}" data-message-id="${message.id}">
 	<div class="border my-1 rounded-3 border-${message.username == username ? "primary" : "secondary" } bg-opacity-50${message.username==username ? " float-end" : "" }" style="width: fit-content; max-width: 400px;">
-		${message.username == username ? `<a href="#" data-delete-id="${message.id}" class="float-end mt-1 me-1"><i class="bi bi-trash"></i></a>` : ""}
-        <p class="my-2 mx-4">
+		${(message.username == username || window.admin) ? `<a href="#" data-delete-id="${message.id}" class="float-end mt-1 me-1"><i class="bi bi-trash"></i></a>` : ""}
+        <div class="my-2 mx-4">
             <strong>
-                <small>${message.username}</small>
+                <small>${message.admin ? '<i class="bi bi-shield me-1"></i>' : ""}${message.username}</small>
             </strong>
             <br />
-            <span class="mb-0 align-middle" style="overflow-wrap: break-word;">${message.content}</span>
-        </p>
+            <span style="overflow-wrap: break-word;" class="message-content">${message.content}</span>
+        </div>
 	</div>
 </div>`;
 		var messageElement = htmlString.toDOM();
-		console.log("Adding message: ", message)
+		console.log("Adding message: ");
+        console.log(messageElement);
 		chatBox.appendChild(messageElement);
 		if (message.username == username) {
 			chatBox.scrollTop = chatBox.scrollHeight;
 		}
         
-        if (message.username == username) {
+        if (message.username == username || window.admin) {
             document.querySelector(`a[data-delete-id="${message.id}"]`).addEventListener('click', event => {
                 deleteMessage(event.target.parentElement.getAttribute("data-delete-id"));
             });
@@ -88,10 +136,9 @@ function main() {
     }
 
     function removeMessage(id) {
+        messagesList = messagesList.filter(message => message.id !== id);
         document.querySelector(`div[data-message-id="${id}"]`) && document.querySelector(`div[data-message-id="${id}"]`).remove();
-    
     }
-
 
 	function addMessages(messages) {
 		messages.forEach(addMessage)
@@ -129,9 +176,10 @@ function main() {
 		var username = await fetch("./username/");
 		username = await username.json();
 		if (username.error == "logged_out") {
-			input.setAttribute("disabled", "")
-			button.setAttribute("disabled", "")
-			button.classList.add("disabled");
+            for (const child of messageGroup.children) {
+                child.classList.add("disabled");
+                child.setAttribute("disabled", "");
+            }
 			messageGroup.tooltip = new bootstrap.Tooltip(messageGroup.parentElement, {
 				title: "You must be logged in to chat.",
 				container: "body"
@@ -144,6 +192,16 @@ function main() {
 		}
 		socket.emit("set username", username);
 		return username;
+	}
+
+    async function checkAdmin() {
+		var admin = await fetch("./admin/");
+		admin = await admin.json();
+		if (!admin.admin) {
+            purgeMessagesBtn.remove();
+            purgeUsersBtn.remove();
+        }
+        window.admin = admin.admin;
 	}
 
 	function sendMessage(content) {
@@ -204,6 +262,7 @@ function main() {
 	chatBox.style.maxHeight = getComputedStyle(realBox).height;
 	realBox.remove();
 	setTimeout(getMessages, 1500);
+    checkAdmin();
 }
 
 window.addEventListener("DOMContentLoaded", main);

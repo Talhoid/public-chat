@@ -9,9 +9,12 @@
 		<meta name="color-scheme" content="dark">
 		<!-- Replace the Bootstrap CSS with the
 			Bootstrap-Dark Variant CSS -->
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap-dark-5@1.1.3/dist/css/bootstrap-night.min.css" rel="stylesheet">
-		<link href="./css/index.css" rel="stylesheet">
-		<link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktY2hhdC1zcXVhcmUtZG90cyIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBkPSJNMTQgMWExIDEgMCAwIDEgMSAxdjhhMSAxIDAgMCAxLTEgMWgtMi41YTIgMiAwIDAgMC0xLjYuOEw4IDE0LjMzMyA2LjEgMTEuOGEyIDIgMCAwIDAtMS42LS44SDJhMSAxIDAgMCAxLTEtMVYyYTEgMSAwIDAgMSAxLTFoMTJ6TTIgMGEyIDIgMCAwIDAtMiAydjhhMiAyIDAgMCAwIDIgMmgyLjVhMSAxIDAgMCAxIC44LjRsMS45IDIuNTMzYTEgMSAwIDAgMCAxLjYgMGwxLjktMi41MzNhMSAxIDAgMCAxIC44LS40SDE0YTIgMiAwIDAgMCAyLTJWMmEyIDIgMCAwIDAtMi0ySDJ6Ii8+CiAgPHBhdGggZD0iTTUgNmExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6bTQgMGExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6bTQgMGExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6Ii8+Cjwvc3ZnPg==">
+		<link rel="stylesheet" href="./css/bootstrap-dark/bootstrap-night.min.css" media="all">
+		
+        <link href="./css/index.css" rel="stylesheet">
+        <!-- <link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgY2xhc3M9ImJpIGJpLWNoYXQtc3F1YXJlLWRvdHMiIHZpZXdCb3g9IjAgMCAxNiAxNiI+DQogIDxzY3JpcHQ+DQogICA8IVtDREFUQVsgYWxlcnQoIlhTUyEiKTsgXV0+DQogIDwvc2NyaXB0Pg0KICA8cGF0aCBkPSJNMTQgMWExIDEgMCAwIDEgMSAxdjhhMSAxIDAgMCAxLTEgMWgtMi41YTIgMiAwIDAgMC0xLjYuOEw4IDE0LjMzMyA2LjEgMTEuOGEyIDIgMCAwIDAtMS42LS44SDJhMSAxIDAgMCAxLTEtMVYyYTEgMSAwIDAgMSAxLTFoMTJ6TTIgMGEyIDIgMCAwIDAtMiAydjhhMiAyIDAgMCAwIDIgMmgyLjVhMSAxIDAgMCAxIC44LjRsMS45IDIuNTMzYTEgMSAwIDAgMCAxLjYgMGwxLjktMi41MzNhMSAxIDAgMCAxIC44LS40SDE0YTIgMiAwIDAgMCAyLTJWMmEyIDIgMCAwIDAtMi0ySDJ6Ii8+DQogIDxwYXRoIGQ9Ik01IDZhMSAxIDAgMSAxLTIgMCAxIDEgMCAwIDEgMiAwem00IDBhMSAxIDAgMSAxLTIgMCAxIDEgMCAwIDEgMiAwem00IDBhMSAxIDAgMSAxLTIgMCAxIDEgMCAwIDEgMiAweiIvPg0KPC9zdmc+">         -->
+        <link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgY2xhc3M9ImJpIGJpLWNoYXQtc3F1YXJlLWRvdHMiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgPHN0eWxlPgogICAgKiB7IGZpbGw6ICMwMDAwMDA7IH0KICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgKiB7IGZpbGw6ICNmZmZmZmY7IH0KICAgIH0KICA8L3N0eWxlPgogIDxwYXRoIGQ9Ik0xNCAxYTEgMSAwIDAgMSAxIDF2OGExIDEgMCAwIDEtMSAxaC0yLjVhMiAyIDAgMCAwLTEuNi44TDggMTQuMzMzIDYuMSAxMS44YTIgMiAwIDAgMC0xLjYtLjhIMmExIDEgMCAwIDEtMS0xVjJhMSAxIDAgMCAxIDEtMWgxMnpNMiAwYTIgMiAwIDAgMC0yIDJ2OGEyIDIgMCAwIDAgMiAyaDIuNWExIDEgMCAwIDEgLjguNGwxLjkgMi41MzNhMSAxIDAgMCAwIDEuNiAwbDEuOS0yLjUzM2ExIDEgMCAwIDEgLjgtLjRIMTRhMiAyIDAgMCAwIDItMlYyYTIgMiAwIDAgMC0yLTJIMnoiLz4KICA8cGF0aCBkPSJNNSA2YTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHptNCAwYTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHptNCAwYTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHoiLz4KPC9zdmc+">
+        <!-- <link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktY2hhdC1zcXVhcmUtZG90cyIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBkPSJNMTQgMWExIDEgMCAwIDEgMSAxdjhhMSAxIDAgMCAxLTEgMWgtMi41YTIgMiAwIDAgMC0xLjYuOEw4IDE0LjMzMyA2LjEgMTEuOGEyIDIgMCAwIDAtMS42LS44SDJhMSAxIDAgMCAxLTEtMVYyYTEgMSAwIDAgMSAxLTFoMTJ6TTIgMGEyIDIgMCAwIDAtMiAydjhhMiAyIDAgMCAwIDIgMmgyLjVhMSAxIDAgMCAxIC44LjRsMS45IDIuNTMzYTEgMSAwIDAgMCAxLjYgMGwxLjktMi41MzNhMSAxIDAgMCAxIC44LS40SDE0YTIgMiAwIDAgMCAyLTJWMmEyIDIgMCAwIDAtMi0ySDJ6Ii8+CiAgPHBhdGggZD0iTTUgNmExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6bTQgMGExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6bTQgMGExIDEgMCAxIDEtMiAwIDEgMSAwIDAgMSAyIDB6Ii8+Cjwvc3ZnPg=="> -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 		<script defer src="https://tombigel.github.io/detect-zoom/detect-zoom.min.js"></script>
 		<script defer src="./js/index.js"></script>
@@ -28,14 +31,14 @@
 					<a class="navbar-brand" href="#">Chat</a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
 					<div class="collapse navbar-collapse" id="navbarNav">
-						<ul class="navbar-nav me-auto">
+						<ul class="navbar-nav me-auto w-75">
 							<li class="nav-item"> <a class="nav-link active" aria-current="page" href="https://talhoid.ml/">Home</a> </li>
 							<li class="nav-item"> <a class="nav-link disabled" aria-current="page" href="https://chat.talhoid.ml/">Chat</a> </li>
 						</ul>
-						<ul class="navbar-nav ms-auto" id="login-register">
-							<li class="nav-item mx-2"><a class="btn btn-success btn-lg" href="/login" role="button">Login</a></li>
-							<li class="nav-item mx-2"><a class="btn btn-primary btn-lg" href="/register" role="button">Sign up</a></li>
-						</ul>
+						<ul class="navbar-nav float-end" id="login-register">
+							<li class="nav-item mx-2"><a class="btn btn-success btn-sm" href="/login" role="button">Login</a></li>
+							<li class="nav-item mx-2"><a class="btn btn-primary btn-sm" href="/register" role="button">Sign up</a></li>
+                        </ul>
 					</div>
 				</div>
 			</nav>
@@ -52,8 +55,10 @@
 				<div class="container-md mx-auto px-0 mb-2" tabindex="0">
 					<div class="input-group merge-up" id="send-messages">
 						<textarea maxlength="500" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="button-send" style="resize: none; height: 35px; overflow-y: hidden;"></textarea>
+                        <button class="btn btn-outline-info" type="button" id="button-purge-messages" data-bs-toggle="modal" data-bs-target="#areYouSure" data-bs-message="All messages will be deleted." data-bs-type="messages">Purge all messages</button>
+                        <button class="btn btn-outline-danger" type="button" id="button-purge-users" data-bs-toggle="modal" data-bs-target="#areYouSure" data-bs-message="All users will be deleted." data-bs-type="users">Purge all users</button>
 						<button class="btn btn-outline-success" type="button" id="button-send">Send</button>
-					</div>
+                    </div>
 				</div>
                 <div class="text-center">
                     <div class="loader" style="display: none;">
@@ -67,6 +72,22 @@
 			</div>
             
 		</div>
+        <div class="modal fade" id="areYouSure" tabindex="-1" aria-labelledby="areYouSureLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="areYouSureLabel">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="areYouSureSubmit">Yes</button>
+                    <button type="button" class="btn btn-success">No</button>
+                </div>
+                </div>
+            </div>
+        </div>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 		<script src="/socket.io/socket.io.min.js" integrity="sha384-VJIc0sPolBR45gnO/L9bIQssk14D1qUYPrlcwMXx2h4CYwK0SHSNcLps9EDzWs5I" crossorigin="anonymous"></script>
 	</body>

@@ -4,18 +4,10 @@
       "username": "Talhoid",
       "password": "$2a$10$xFoy42LL2YazOrVBkIj.ieJhJvisbA1pNuur5kPr/7AGbCrlareNS",
       "id": "473eceaf65807888c09419a221290cec"
-    },
-    {
-      "username": "fazz",
-      "password": "$2a$10$JpkHUDpr9ZM45YK7VFAQKenuqvIzO6wi7gUtaFez.vWTEcMZh8fm6",
-      "id": "964982faffa969674d76a99dd86aa97d"
     }
   ],
-  "chat": [
-    {
-      "content": "gello",
-      "username": "Talhoid",
-      "id": "739aaefd3e145b52eaa0519c824f30cc"
-    }
+  "chat": [],
+  "admins": [
+    "Talhoid"
   ]
 }

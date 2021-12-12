@@ -1,10 +1,10 @@
 /* https://ishadeed.com/article/custom-scrollbars-css/ */
 /* Modified a little */
-.chat-box::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 20px;
 }
 
-.chat-box::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background-color: var(--bs-body-bg);
     border-radius: 100px;
 }
@@ -14,7 +14,7 @@
 }
 
 
-.chat-box::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     border-radius: 100px;
     border: 5px solid transparent;
     background-clip: content-box;
@@ -27,14 +27,14 @@ body,
     width: 100%;
 }
 
-.d-spoiler {
+.d-spoiler, .d-spoiler * {
     background-color: var(--spoiled-bg ,black) !important;
     border-radius: 0.3rem !important;
-    color: var(--spoiled-color, transparent);
+    color: var(--spoiled-color, transparent) !important;
     transition: all .3s !important;
 }
 
-.d-spoiler:hover {
+.d-spoiler:hover, .d-spoiler:hover * {
     --spoiled-bg: transparent;
     --spoiled-color: rgba(255,255,255,.7);
     border-radius: 0px !important;
