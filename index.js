@@ -1,5 +1,4 @@
 const express = require("express");
-const sass = require("node-sass-middleware");
 const bodyParser = require("body-parser");
 const app = express();
 const auth = require("./auth");
@@ -81,11 +80,11 @@ app.use(
         }
     }));
 
-app.use(sass({
-    src: __dirname + "/sass", // Input SASS files
-    dest: __dirname + "/static", // Output CSS
-    debug: false
-}));
+// app.use(sass({
+//     src: __dirname + "/sass", // Input SASS files
+//     dest: __dirname + "/static", // Output CSS
+//     debug: false
+// }));
 app.use(express.static("static", {
     extensions: ["html"]
 }));
