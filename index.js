@@ -20,18 +20,12 @@ function haltOnTimedout(req, res, next) {
     if (!req.timedout) next();
 }
 
-const httpOnlyOptions = {
+const cookieOptions = {
     maxAge: 1000 * 60 ** 2 * 2, // would expire after 2 hours
     httpOnly: true, // The cookie only accessible by the web server
     signed: true, // Indicates if the cookie should be signed
-    sameSite: "Strict"
-};
-
-const cookieOptions = {
-    maxAge: 1000 * 60 ** 2 * 2, // would expire after 2 hours
-    httpOnly: false, // The cookie only accessible by the web server
-    signed: false, // Indicates if the cookie should be signed
-    sameSite: "Strict"
+    sameSite: "Strict",
+    secure: true
 };
 
 
@@ -131,9 +125,8 @@ app.post("/login/submit", bodyParser.urlencoded({ extended: true }), async (req,
             // db.setUserToken(username, token);
 
             // user
-            res.cookie("token", token, httpOnlyOptions);
-            res.cookie("username", username, httpOnlyOptions);
-            res.cookie("loggedIn", true, cookieOptions);
+            res.cookie("token", token, cookieOptions);
+            res.cookie("username", username, cookieOptions);
             return res.status(200).redirect("/");
         }
         return res.status(400).json({
@@ -186,9 +179,8 @@ app.post("/register/submit", bodyParser.urlencoded({ extended: true }), async (r
         );
 
         // db.setUserToken(username, token);
-        res.cookie("token", token, httpOnlyOptions);
-        res.cookie("username", username, httpOnlyOptions);
-        res.cookie("loggedIn", true, cookieOptions);
+        res.cookie("token", token, cookieOptions);
+        res.cookie("username", username, cookieOptions);
         return res.status(200).redirect("/");
     } catch (e) {
         console.error(e);
