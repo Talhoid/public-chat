@@ -25,6 +25,6 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "save-on-change": "^1.0.7",
-    "socket.io": "^4.3.1"
+    "socket.io": "^4.4.0"
   }
 }
