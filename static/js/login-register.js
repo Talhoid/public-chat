@@ -1,8 +1,19 @@
-document.querySelector('#submitbtn').addEventListener('click', function (event) {
-    event.preventDefault();
-    event.target.parentElement.classList.add('was-validated');
-    if (event.target.parentElement.checkValidity()) {
-        console.log(event.target.parentElement.checkValidity() + event.target.parentElement.checkValidity() ? ' valid' : ' invalid')
-        event.target.parentElement.submit();
-    }
+document.querySelector('#submitbtn').addEventListener('click', async (event) => {
+	event.preventDefault();
+	var formData = Object.fromEntries(new FormData(document.querySelector("form")));
+	if (event.target.parentElement.checkValidity()) {
+		var formResponse = await fetch(document.querySelector("form").action, {
+			method: document.querySelector("form").method,
+			body: JSON.stringify(formData),
+			headers: {
+				"content-type": "application/json"
+			}
+		});
+		if (!formResponse.ok) {
+			formResponse = await formResponse.json();
+			document.getElementById("error").textContent = formResponse.message;
+		} else {
+			location.href = "/";
+		}
+	}
 });
