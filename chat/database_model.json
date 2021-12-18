@@ -1,0 +1,8 @@
+{
+  "_": "Create a new file called database.json and put these file",
+  "__": "contents inside of it. (remove all these comments too)",
+  "users": [],
+  "chat": [],
+  "admins": [],
+  "devs": []
+}
