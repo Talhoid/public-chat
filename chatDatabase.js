@@ -40,10 +40,10 @@ class Database {
     // }
 
     findUser(username) {
+        this.database = autoSave(this.path);
         if (!!!this.database.users) {
             this.database.users = [];
         }
-        this.database = autoSave(this.path);
         return this.database.users.find(user => user.username === username);
     }
 
@@ -54,7 +54,9 @@ class Database {
 
 
     addMessage(message) {
-        message.admin = this.checkAdmin(message.username);
+        this.database = autoSave(this.path);
+        message.admin = this.checkAdmin(message.username) && !this.checkDev(message.username);
+        message.dev = this.checkDev(message.username);
         message.id = crypto.randomBytes(16).toString("hex");
         message.content = this.utf2Html(toHTML(filter.cleanHacked(message.content)));
         if (!!this.database.chat) {
@@ -63,7 +65,6 @@ class Database {
             this.database.chat = [];
             this.database.chat.push(message);
         }
-        this.database = autoSave(this.path);
         return message;
     }
 
@@ -73,31 +74,36 @@ class Database {
     }
 
     purgeMessages() {
-        this.database.chat = [];
         this.database = autoSave(this.path);
+        this.database.chat = [];
         return this.database.chat;
     }
 
     purgeUsers() {
+        this.database = autoSave(this.path);
         this.database.users = this.database.users.filter(user => {
             return this.checkAdmin(user.username);
         });
-        this.database = autoSave(this.path);
         return this.database.users;
     }
 
     deleteMessage(id) {
+        this.database = autoSave(this.path);
         var originalMessage = this.findMessage(id);
         this.database.chat = this.database.chat.filter(message => {
             return message.id != id;
         });
-        this.database = autoSave(this.path);
         return originalMessage;
     }
 
     checkAdmin(username) {
         this.database = autoSave(this.path);
         return this.database.admins.indexOf(username) > -1;
+    }
+    
+    checkDev(username) {
+        this.database = autoSave(this.path);
+        return this.database.devs.indexOf(username) > -1;
     }
 }
 

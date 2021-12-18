@@ -96,7 +96,7 @@ function main() {
 		${(message.username == username || window.admin) ? `<a href="#" data-delete-id="${message.id}" class="float-end mt-1 me-1"><i class="bi bi-trash"></i></a>` : ""}
         <div class="my-2 mx-4">
             <strong>
-                <small>${message.admin ? '<i class="bi bi-shield me-1"></i>' : ""}${message.username}</small>
+                <small>${message.admin ? '<i class="bi bi-shield me-1"></i> ' : ""}${message.dev ? '<i class="bi bi-code-slash"></i> ' : ""}${message.username}</small>
             </strong>
             <br />
             <span style="overflow-wrap: break-word;" class="message-content">${message.content}</span>
@@ -196,9 +196,9 @@ function main() {
 		window.admin = admin.admin;
 	}
 
-	function sendMessage(content) {
+	async function sendMessage(content) {
 		if (content) {
-			fetch("/chat/add", {
+			var response = await fetch("/chat/add", {
 				method: "POST",
 				headers: {
 					"content-type": "application/json"
@@ -207,6 +207,13 @@ function main() {
 					content: content,
 				})
 			});
+            if (response.status == 429) {
+                response = await response.json();
+                document.getElementById("error").textContent = response.message;
+                setTimeout(_ => {
+                    document.getElementById("error").textContent = "";
+                }, 1200);
+            }
 		}
 	}
 	input.addEventListener("keydown", (event) => {
