@@ -11,8 +11,9 @@ function main() {
 	var typers = [];
 	var purgeBtn = document.getElementById("button-purge");
 	var purgeSubmit = document.getElementById("purge-submit");
+    var purgeModal = document.getElementById("purge-modal");
 	purgeSubmit.addEventListener("click", event => {
-		purge(areYouSureModal.querySelector('.modal-body').querySelector("select").value);
+		purge(purgeModal.querySelector('.modal-body').querySelector("select").value);
 	});
 	window.messagesList = [];
 	const TYPING_TIMER_LENGTH = 1400;
