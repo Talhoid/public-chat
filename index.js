@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const timeout = require("connect-timeout");
 const path = require("path");
-const fs = require('fs');
+const crypto = require('crypto');
 const minify = require('express-minify');
 const helmet = require("helmet");
 const sprightly = require("sprightly");
@@ -42,14 +42,10 @@ app.use(fingerprint({
 app.use(morgan(function(tokens, req, res) {
 	var status = tokens.status(req, res);
 	var color = status >= 500 ? 31 // red
-		:
-		status >= 400 ? 33 // yellow
-		:
-		status >= 300 ? 36 // cyan
-		:
-		status >= 200 ? 32 // green
-		:
-		0 // no color
+		: status >= 400 ? 33 // yellow
+	    	: status >= 300 ? 36 // cyan
+                : status >= 200 ? 32 // green
+                    : 0 // no color
 	function random(min, max) {
 		let range = max - min + 1;
 		return Math.floor(Math.random() * range) + min
@@ -207,7 +203,7 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 				error: "user_exists"
 			});
 		} else {
-			encryptedPassword = await bcrypt.hash(password, 10);
+			encryptedPassword = await bcrypt.hash(password, crypto.randomBytes(128).toString("hex"));
 			var user = db.addUser({
 				username: username,
 				password: encryptedPassword
