@@ -1,4 +1,3 @@
-console.log(`Hello world from version ${process.version}`);
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -11,14 +10,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const timeout = require("connect-timeout");
 const path = require("path");
-const crypto = require('crypto');
-const minify = require('express-minify');
 const helmet = require("helmet");
 const sprightly = require("sprightly");
 const rateLimit = require("express-rate-limit");
 const fingerprint = require('express-fingerprint');
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-// app.use(minify());
 app.engine("html", sprightly);
 app.set("view engine", "html");
 app.set("views", "static");
@@ -91,9 +87,9 @@ const limiter = rateLimit({
 	windowMs: 2 * 60 * 1000, // 2 minutes
 	max: function(req, res) {
 		if (db.checkAdmin(req.signedCookies.username)) {
-			return 0;
+			return 128;
 		}
-		return 30;
+		return 64;
 	},
 	message: {
 		"message": "You are being ratelimited.",
