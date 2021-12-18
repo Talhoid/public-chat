@@ -197,7 +197,6 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 			});
 		}
 		const oldUser = await db.findUser(username);
-		console.log("oldUser: ", oldUser);
 		if (oldUser) {
 			return res.status(409).json({
 				message: "User Already Exists. Please Login.",
