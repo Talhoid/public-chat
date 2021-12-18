@@ -4,7 +4,8 @@
   "description": "A public chat.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "NODE_ENV=production node ."
   },
   "keywords": [],
   "author": "@Talhoid",
@@ -22,14 +23,26 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-fingerprint": "^1.2.2",
+    "express-middleware-obfuscator": "^1.0.6",
     "express-minify": "^1.0.0",
     "express-rate-limit": "^5.5.1",
     "helmet": "^4.6.0",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "lowdb": "^3.0.0",
     "morgan": "^1.10.0",
-    "save-on-change": "^1.0.7",
     "socket.io": "^4.3.1",
     "sprightly": "^1.0.3"
-  }
+  },
+  "devDependencies": {
+    "node": "^16.13.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Talhoid/public-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Talhoid/public-chat/issues"
+  },
+  "homepage": "https://github.com/Talhoid/public-chat#readme"
 }

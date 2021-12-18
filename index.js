@@ -1,3 +1,4 @@
+console.log(`Hello world from version ${process.version}`);
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -15,13 +16,9 @@ const minify = require('express-minify');
 const helmet = require("helmet");
 const sprightly = require("sprightly");
 const rateLimit = require("express-rate-limit");
-const fingerprint = require('express-fingerprint')
+const fingerprint = require('express-fingerprint');
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-app.use(async (_, __, next) => {
-	await sleep(500);
-	next();
-});
-app.use(minify());
+// app.use(minify());
 app.engine("html", sprightly);
 app.set("view engine", "html");
 app.set("views", "static");
@@ -50,13 +47,7 @@ app.use(morgan(function(tokens, req, res) {
 		let range = max - min + 1;
 		return Math.floor(Math.random() * range) + min
 	}
-	var coloredFingerprint = Array.from(req.fingerprint.hash);
-	coloredFingerprint.forEach((element, index, string) => {
-		color = random(31, 37);
-		string[index] = `\x1b[${color}m${element}`
-	});
-	return `\x1b[0m${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms\x1b[0m
-fingerprint: ${req.fingerprint.hash}\x1b[0m`
+	return `\x1b[0m${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms\nfingerprint: ${req.fingerprint.hash}\x1b[0m`
 }));
 app.use(helmet({
 	contentSecurityPolicy: false
@@ -85,7 +76,17 @@ const cookieOptions = {
 };
 // app.use('/css/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 const JSONDB = require("./chatDatabase.js")
-var db = JSONDB.connect("./chat/database.json");
+var db;
+(async (_) => {db = await JSONDB.connect("./chat/database.json");})()
+const verifyAdmin = (req, res, next) => {
+    if (!db.checkAdmin(req.signedCookies.username)) {
+        return res.status(403).json({
+            message: "User is not an admin.",
+            error: "not_admin"
+        });
+    }
+    next();
+}
 const limiter = rateLimit({
 	windowMs: 2 * 60 * 1000, // 2 minutes
 	max: function(req, res) {
@@ -149,7 +150,7 @@ app.post("/login", bodyParser.json(), async (req, res, next) => {
 			});
 		}
 		// Validate if user exist in our database
-		const user = db.findUser(username);
+		const user = await db.findUser(username);
 		if (user && (await bcrypt.compare(password, user.password))) {
 			// Create token
 			const token = jwt.sign({
@@ -182,9 +183,9 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 			password
 		} = req.body;
 		username = username.replace(/[^\w\s.,!@#$%^&*()=+~`-]/g, "");
-		if (!(/^[a-zA-Z0-9]*$/.test(username))) {
+		if (!(/^[a-zA-Z0-9]{4, 32}$/.test(username))) {
 			return res.status(400).json({
-				message: "Username must only contain 0-9, a-z, or hyphen",
+				message: "Username must only contain 0-9, a-z, or hyphen and must be between 4 and 32 characters.",
 				error: "invalid_username"
 			});
 		}
@@ -195,7 +196,7 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 				error: "incomplete_request"
 			});
 		}
-		const oldUser = db.findUser(username);
+		const oldUser = await db.findUser(username);
 		console.log("oldUser: ", oldUser);
 		if (oldUser) {
 			return res.status(409).json({
@@ -203,8 +204,8 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 				error: "user_exists"
 			});
 		} else {
-			encryptedPassword = await bcrypt.hash(password, crypto.randomBytes(128).toString("hex"));
-			var user = db.addUser({
+			encryptedPassword = await bcrypt.hash(password, 10);
+			var user = await db.addUser({
 				username: username,
 				password: encryptedPassword
 			});
@@ -235,13 +236,13 @@ app.get("/username", (req, res) => {
 		error: "logged_out"
 	});
 });
-app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), (req, res) => {
+app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), async (req, res) => {
 	const {
 		content
 	} = req.body;
 	if (!!content && /^(?!\s*$).+/g.test(content) && content.length <= 500) {
 		console.log(`Message: ${content}`)
-		var message = db.addMessage({
+		var message = await db.addMessage({
 			content: content.replace(/^\s*$(?:\r\n?|\n)/gm, ""),
 			username: req.signedCookies.username
 		});
@@ -259,7 +260,7 @@ app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), (req, res) =
 		});
 	}
 });
-app.delete("/chat/delete", limiter, auth.verifyToken, bodyParser.json(), (req, res) => {
+app.delete("/chat/delete", limiter, auth.verifyToken, bodyParser.json(), async (req, res) => {
 	const {
 		id
 	} = req.body;
@@ -269,7 +270,7 @@ app.delete("/chat/delete", limiter, auth.verifyToken, bodyParser.json(), (req, r
 			"error": "malformed_id"
 		});
 	}
-	const message = db.findMessage(id) || {};
+	const message = await db.findMessage(id) || {};
 	if (message.username != req.signedCookies.username && !db.checkAdmin(req.signedCookies.username)) {
 		return res.status(403).json({
 			"message": "Insufficient permissions.",
@@ -277,15 +278,15 @@ app.delete("/chat/delete", limiter, auth.verifyToken, bodyParser.json(), (req, r
 		});
 	}
 	io.emit("message remove", id);
-	return res.json(db.deleteMessage(id));
+	return res.json(await db.deleteMessage(id));
 });
-app.delete("/chat/purge", auth.verifyToken, auth.verifyAdmin(db), bodyParser.json(), (req, res) => {
+app.delete("/chat/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), async (req, res) => {
 	const messages = db.getMessages();
 	for (const message of messages) {
 		io.emit("message remove", message.id);
 	}
 	return res.json({
-		chat: db.purgeMessages()
+		chat: await db.purgeMessages()
 	});
 });
 app.get("/admin", (req, res) => {
@@ -293,9 +294,9 @@ app.get("/admin", (req, res) => {
 		admin: db.checkAdmin(req.signedCookies.username)
 	});
 });
-app.delete("/users/purge", auth.verifyToken, auth.verifyAdmin(db), bodyParser.json(), (req, res) => {
+app.delete("/users/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), async (req, res) => {
 	return res.json({
-		users: (db.purgeUsers.bind(db))()
+		users: await (db.purgeUsers.bind(db))()
 	});
 });
 io.on("connection", (socket) => {

@@ -2,34 +2,17 @@ function main() {
 	var chatBox = document.querySelector(".chat-box");
 	var socket = io();
 	var input = document.getElementById("send-messages").children[0];
-	var button = document.getElementById("send-messages").children[3];
+	var button = document.getElementById("send-messages").children[2];
 	var messageGroup = document.getElementById("send-messages");
 	var isTyping = false;
 	var typersElement = document.getElementById("username-list");
 	var typersMessage = document.getElementById("typing-message");
 	var typersLoader = document.querySelector(".loader");
 	var typers = [];
-	var purgeMessagesBtn = document.getElementById("button-purge-messages");
-	var purgeUsersBtn = document.getElementById("button-purge-users");
-	var areYouSureSubmit = document.getElementById("areYouSureSubmit");
-	var areYouSureModal = document.getElementById("areYouSure");
-	areYouSureModal.addEventListener('show.bs.modal', function(event) {
-		// Button that triggered the modal
-		var button = event.relatedTarget
-		// Extract info from data-bs-* attributes
-		var message = button.getAttribute('data-bs-message');
-		var type = button.getAttribute('data-bs-type');
-		// If necessary, you could initiate an AJAX request here
-		// and then do the updating in a callback.
-		//
-		// Update the modal's content.
-		var modalBody = areYouSureModal.querySelector('.modal-body');
-		var modalButton = areYouSureModal.querySelector(".modal-footer button.btn-danger");
-		modalButton.dataset.purgeType = type;
-		modalBody.textContent = message;
-	});
-	areYouSureSubmit.addEventListener("click", event => {
-		purge(event.target.dataset.purgeType);
+	var purgeBtn = document.getElementById("button-purge");
+	var purgeSubmit = document.getElementById("purge-submit");
+	purgeSubmit.addEventListener("click", event => {
+		purge(areYouSureModal.querySelector('.modal-body').querySelector("select").value);
 	});
 	window.messagesList = [];
 	const TYPING_TIMER_LENGTH = 1400;
@@ -51,6 +34,8 @@ function main() {
 					body: JSON.stringify({})
 				});
 				break;
+            default:
+                break;
 		}
 	}
 	String.prototype.toDOM = function() {
@@ -118,9 +103,9 @@ function main() {
 		hljs.highlightAll();
 	}
 
-	function deleteMessage(id) {
+	async function deleteMessage(id) {
 		console.log("delete", id);
-		fetch("/chat/delete", {
+		var response = await fetch("/chat/delete", {
 			method: "DELETE",
 			headers: {
 				"content-type": "application/json"
@@ -129,6 +114,13 @@ function main() {
 				id: id
 			})
 		});
+        if (response.status == 429) {
+                response = await response.json();
+                document.getElementById("error").textContent = response.message;
+                setTimeout(_ => {
+                    document.getElementById("error").textContent = "";
+                }, 1200);
+            }
 	}
 
 	function removeMessage(id) {
@@ -190,8 +182,7 @@ function main() {
 		var admin = await fetch("./admin/");
 		admin = await admin.json();
 		if (!admin.admin) {
-			purgeMessagesBtn.remove();
-			purgeUsersBtn.remove();
+			purgeBtn.remove();
 		}
 		window.admin = admin.admin;
 	}

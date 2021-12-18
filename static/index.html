@@ -44,8 +44,7 @@
 				<div class="container-md mx-auto px-0 mb-2" tabindex="0">
 					<div class="input-group merge-up" id="send-messages">
 						<textarea maxlength="500" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="button-send" style="resize: none; height: 35px; overflow-y: hidden;"></textarea>
-                        <button class="btn btn-outline-info" type="button" id="button-purge-messages" data-bs-toggle="modal" data-bs-target="#areYouSure" data-bs-message="All messages will be deleted." data-bs-type="messages">Purge all messages</button>
-                        <button class="btn btn-outline-danger" type="button" id="button-purge-users" data-bs-toggle="modal" data-bs-target="#areYouSure" data-bs-message="All users will be deleted." data-bs-type="users">Purge all users</button>
+                        <button class="btn btn-outline-danger" type="button" id="button-purge" data-bs-toggle="modal" data-bs-target="#purge-modal">Purge</button>
 						<button class="btn btn-outline-success" type="button" id="button-send">Send</button>
                     </div>
 				</div>
@@ -61,19 +60,25 @@
                 <p class="mt-2 text-center" style="color: var(--bs-danger);" id="error"></p>
 			</div>
 		</div>
-        <div class="modal fade" id="areYouSure" tabindex="-1" aria-labelledby="areYouSureLabel" aria-hidden="true">
+        <div class="modal fade" id="purge-modal" tabindex="-1" aria-labelledby="purge-label" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="areYouSureLabel">Are you sure?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="areYouSureSubmit">Yes</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
-                </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purge-label">Are you sure?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Select your purge type:
+                        <select class="form-select mt-1" aria-label="Default select example">
+                            <option selected></option>
+                            <option value="users">Users</option>
+                            <option value="messages">Messages</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="purge-submit">Yes</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+                    </div>
                 </div>
             </div>
         </div>

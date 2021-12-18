@@ -5,6 +5,9 @@ const path = require("path");
 const {
     toHTML
 } = require('discord-markdown');
+
+const { join } = require("path");
+
 const Filter = require('./bad-words-fixed'),
     filter = new Filter({
         placeHolder: "\\*"
@@ -20,99 +23,112 @@ class Database {
     }
 
 
-    addUser(userObj) {
+    async addUser(userObj) {
+        
         userObj.id = crypto.randomBytes(16).toString("hex");
-        if (!!this.database.users) {
-            this.database.users.push(userObj);
+        if (!!this.database.data.users) {
+            this.database.data.users.push(userObj);
         } else {
-            this.database.users = [];
-            this.database.users.push(userObj);
+            this.database.data.users = [];
+            this.database.data.users.push(userObj);
         }
-        this.database = autoSave(this.path);
+        await this.database.write();
         return userObj;
     }
     // Why do we do this? its a security risk 
     // setUserToken(username, token) {
-    //     var userList = this.database.users;
+    //     var userList = this.database.data.users;
     //     var user = userList.find(user => user.username === username);
     //     user.token = token;
-    //     this.database.users[userList.indexOf(userList.find(user => user.username === username)).toString()] = user
+    //     this.database.data.users[userList.indexOf(userList.find(user => user.username === username)).toString()] = user
     // }
 
-    findUser(username) {
-        this.database = autoSave(this.path);
-        if (!!!this.database.users) {
-            this.database.users = [];
+    async findUser(username) {
+        
+        if (!!!this.database.data.users) {
+            this.database.data.users = [];
+            await this.database.write();
         }
-        return this.database.users.find(user => user.username === username);
+        return this.database.data.users.find(user => user.username === username);
     }
 
     findMessage(id) {
-        this.database = autoSave(this.path);
-        return this.database.chat.find(message => message.id === id)
+        
+        return this.database.data.chat.find(message => message.id === id)
     }
 
 
-    addMessage(message) {
-        this.database = autoSave(this.path);
+    async addMessage(message) {
+        
         message.admin = this.checkAdmin(message.username) && !this.checkDev(message.username);
         message.dev = this.checkDev(message.username);
         message.id = crypto.randomBytes(16).toString("hex");
         message.content = this.utf2Html(toHTML(filter.cleanHacked(message.content)));
-        if (!!this.database.chat) {
-            this.database.chat.push(message);
+        if (!!this.database.data.chat) {
+            this.database.data.chat.push(message);
         } else {
-            this.database.chat = [];
-            this.database.chat.push(message);
+            this.database.data.chat = [];
+            this.database.data.chat.push(message);
         }
+        await this.database.write();
         return message;
     }
 
     getMessages() {
-        this.database = autoSave(this.path);
-        return this.database.chat;
+        
+        return this.database.data.chat;
     }
 
-    purgeMessages() {
-        this.database = autoSave(this.path);
-        this.database.chat = [];
-        return this.database.chat;
+    async purgeMessages() {
+        
+        this.database.data.chat = [];
+        await this.database.write();
+        return this.database.data.chat;
     }
 
-    purgeUsers() {
-        this.database = autoSave(this.path);
-        this.database.users = this.database.users.filter(user => {
+    async purgeUsers() {
+        
+        this.database.data.users = this.database.data.users.filter(user => {
             return this.checkAdmin(user.username);
         });
-        return this.database.users;
+        await this.database.write();
+        return this.database.data.users;
     }
 
-    deleteMessage(id) {
-        this.database = autoSave(this.path);
+    async deleteMessage(id) {
         var originalMessage = this.findMessage(id);
-        this.database.chat = this.database.chat.filter(message => {
+        this.database.data.chat = this.database.data.chat.filter(message => {
             return message.id != id;
         });
+        await this.database.write();
         return originalMessage;
     }
 
     checkAdmin(username) {
-        this.database = autoSave(this.path);
-        return this.database.admins.indexOf(username) > -1;
+        return this.database.data.admins.indexOf(username) > -1;
     }
     
     checkDev(username) {
-        this.database = autoSave(this.path);
-        return this.database.devs.indexOf(username) > -1;
+        
+        return this.database.data.devs.indexOf(username) > -1;
     }
 }
 
-function connect(databasePath) {
+async function connect(databasePath) {
+    const lowdb = await import('lowdb');
     console.log(`[${path.basename(__filename)}] loading ${databasePath}`)
-    var finalDatabase = new Database(autoSave(databasePath), databasePath);
+    const adapter = new lowdb.JSONFile(join(__dirname, databasePath));
+    const db = new lowdb.Low(adapter);
+    await db.read();
+    var finalDatabase = new Database(db, databasePath);
     return finalDatabase;
 }
 
+function save() {
+    
+}
+
 module.exports = {
-    connect: connect
+    connect: connect,
+    save: save
 };
