@@ -50,6 +50,16 @@ function main() {
 		return b;
 	};
 
+    titleSwitch(2000, "project number", "0x01 • ctalhoid")
+    function titleSwitch(time, ...titles) {
+        titles.forEach((title, index) => {
+            setInterval(setTitle, time * (index + 1), title);
+        });
+        function setTitle(title) {
+            document.title = title;
+        }
+    }
+
 	function updateTyping() {
 		if (!isTyping) {
 			isTyping = true;
