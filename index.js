@@ -1,3 +1,4 @@
+console.log(`node.js ${process.version}`);
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -14,6 +15,8 @@ const helmet = require("helmet");
 const sprightly = require("sprightly");
 const rateLimit = require("express-rate-limit");
 const fingerprint = require('express-fingerprint');
+const osu = require('node-os-utils');
+const { cpu, drive, mem, netstat, os } = osu;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 app.engine("html", sprightly);
 app.set("view engine", "html");
@@ -46,8 +49,10 @@ app.use(morgan(function(tokens, req, res) {
 	return `\x1b[0m${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms\nfingerprint: ${req.fingerprint.hash}\x1b[0m`
 }));
 app.use(helmet({
-	contentSecurityPolicy: false
+	contentSecurityPolicy: false,
+    frameguard: false
 }));
+app.use(cookieParser(process.env.SIGNING_KEY));
 
 function skip(req, res) {
 	if (!!req.headers.pinger) {
@@ -58,7 +63,6 @@ function skip(req, res) {
 	}
 	return !!req.headers.pinger
 }
-app.use(cookieParser(process.env.SIGNING_KEY));
 
 function haltOnTimedout(req, res, next) {
 	if (!req.timedout) next();
@@ -99,30 +103,6 @@ const limiter = rateLimit({
 		return req.fingerprint.hash
 	}
 });
-pingCounts = 0
-// My stupid idea
-// app.use(function (req, res, next) {
-//     var filename = req.url;
-//     filename = (filename == "/") ? "index.html" : filename.substring(1)
-//     var isHtml = path.extname(filename) == ".html"
-//     if (!isHtml && fs.existsSync("./static/" + filename + ".html")) {
-//         isHtml = true
-//     }
-//     if (fs.existsSync("./static" + filename)) {
-//         console.log(filename)
-//     }
-//     void (isHtml ? res.render(filename.replace(".html", "") + ".html") : undefined)
-//     return next();
-// });
-// app.use(sass({
-//     src: __dirname + "/sass", // Input SASS files
-//     dest: __dirname + "/static", // Output CSS
-//     debug: false
-// }));
-// app.use((req, res, next) => {
-// 	console.log(`"${req.url}": ${req.fingerprint.hash}`);
-// 	next();
-// })
 app.get("/", (req, res, next) => {
 	return res.render("index.html");
 });
@@ -132,6 +112,18 @@ app.get("/login", (req, res, next) => {
 app.get("/register", (req, res, next) => {
 	return res.render("register.html");
 });
+
+// var statsObject = {};
+// statsObject.cpuUsage = await cpu.usage();
+// statsObject.cpuFree = await cpu.free();
+// statsObject.drive = await drive.info();
+// statsObject.memory = await mem.info();
+// statsObject.os = os.platform();
+// statsObject.uptime = os.uptime();
+// statsObject.hostname = os.hostname();
+// statsObject.ip = os.ip();
+// statsObject.type = os.type();
+// statsObject.arch = os.arch();
 app.post("/login", bodyParser.json(), async (req, res, next) => {
 	try {
 		const {
@@ -327,7 +319,7 @@ app.use(function(req, res, next) {
 	// respond with html page
 	if (req.accepts('html')) {
 		res.render('404', {
-			url: req.url
+			url: req.url.substring(1)
 		});
 		return;
 	}
