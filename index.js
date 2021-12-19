@@ -16,7 +16,8 @@ const sprightly = require("sprightly");
 const rateLimit = require("express-rate-limit");
 const fingerprint = require('express-fingerprint');
 const osu = require('node-os-utils');
-const { cpu, drive, mem, netstat, os } = osu;
+const url = require('url');
+// const { cpu, drive, mem, netstat, os } = osu;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 app.engine("html", sprightly);
 app.set("view engine", "html");
@@ -96,8 +97,9 @@ const limiter = rateLimit({
 		return 64;
 	},
 	message: {
-		"message": "You are being ratelimited.",
-		"error": "ratelimited"
+		"message": '<i class="bi bi-snow"></i> Take a chill pill, dude.',
+		"error": "ratelimited",
+        "color": "#127faf"
 	},
 	keyGenerator: (req) => {
 		return req.fingerprint.hash
@@ -107,10 +109,25 @@ app.get("/", (req, res, next) => {
 	return res.render("index.html");
 });
 app.get("/login", (req, res, next) => {
-	return res.render("login.html");
+	if (!!req.signedCookies.username && !!req.signedCookies.token) {
+        return res.redirect("/");
+    }
+    return res.render("login.html");
 });
 app.get("/register", (req, res, next) => {
-	return res.render("register.html");
+	if (!!req.signedCookies.username && !!req.signedCookies.token) {
+        return res.redirect("/");
+    }
+    return res.render("register.html");
+});
+app.get("/logout", (req, res, next) => {
+	res.cookie("token", "...", {
+        expires: new Date(0)
+    });
+    res.cookie("username", ".", {
+        expires: new Date(0)
+    });
+    return res.redirect("/");
 });
 
 // var statsObject = {};
@@ -216,12 +233,11 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 app.get("/chat/messages", (req, res) => {
 	return res.json(db.getMessages());
 });
-app.get("/username", (req, res) => {
-	return res.status(req.signedCookies.username ? 200 : 403).json(req.signedCookies.username ? {
-		username: req.signedCookies.username
-	} : {
-		error: "logged_out"
-	});
+app.get("/info", (req, res) => {
+    res.json({
+        username: req.signedCookies.username || { error: "logged_out" },
+        admin: db.checkAdmin(req.signedCookies.username || "")
+    })
 });
 app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), async (req, res) => {
 	const {
@@ -276,11 +292,6 @@ app.delete("/chat/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), asyn
 		chat: await db.purgeMessages()
 	});
 });
-app.get("/admin", (req, res) => {
-	return res.json({
-		admin: db.checkAdmin(req.signedCookies.username)
-	});
-});
 app.delete("/users/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), async (req, res) => {
 	return res.json({
 		users: await (db.purgeUsers.bind(db))()
@@ -319,7 +330,7 @@ app.use(function(req, res, next) {
 	// respond with html page
 	if (req.accepts('html')) {
 		res.render('404', {
-			url: req.url.substring(1)
+			url: url.parse(req.url).pathname.substring(1).replace(/([\\\/])/g, '<span class="text-muted fs-6"> $1 </span>')
 		});
 		return;
 	}

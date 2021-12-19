@@ -17,7 +17,7 @@ function main() {
 	});
 	window.messagesList = [];
 	const TYPING_TIMER_LENGTH = 1400;
-	getUsername();
+	getInfo();
 
 	function purge(type) {
 		switch (type) {
@@ -66,20 +66,12 @@ function main() {
 		}, TYPING_TIMER_LENGTH);
 	}
 
-	function changeTag(el, tag) {
-		var parent = el.parentNode,
-			newElem = document.createElement(tag);
-		newElem.innerHTML = el.value || el.innerHTML
-		parent.replaceChild(newElem, el);
-		return newElem;
-	}
-
 	function addMessage(message) {
 		messagesList.push(message);
 		document.getElementById("nothing-to-see").style.display = "none";
 		var htmlString = `<div class="w-100 float-start" data-username="${message.username}" data-message-id="${message.id}">
 	<div class="border my-1 rounded-3 border-${message.username == username ? "primary" : "secondary" } bg-opacity-50${message.username==username ? " float-end" : "" }" style="width: fit-content; max-width: 400px;">
-		${(message.username == username || window.admin) ? `<a href="#" data-delete-id="${message.id}" class="float-end mt-1 me-1"><i class="bi bi-trash"></i></a>` : ""}
+		${(message.username == username || window.admin) ? `<a href="#delete-${message.id}" data-delete-id="${message.id}" class="float-end mt-1 me-1"><i class="bi bi-trash"></i></a>` : ""}
         <div class="my-2 mx-4">
             <strong>
                 <small>${message.admin ? '<i class="bi bi-shield me-1"></i> ' : ""}${message.dev ? '<i class="bi bi-code-slash"></i> ' : ""}${message.username}</small>
@@ -90,22 +82,24 @@ function main() {
 	</div>
 </div>`;
 		var messageElement = htmlString.toDOM();
-		console.log("Adding message: ");
-		console.log(messageElement);
-		chatBox.appendChild(messageElement);
+        messageElement = chatBox.appendChild(messageElement.firstElementChild);
+		console.log("%cAdded message: %o", "color: limegreen", messageElement);
+        
 		if (message.username == username) {
 			chatBox.scrollTop = chatBox.scrollHeight;
 		}
 		if (message.username == username || window.admin) {
-			document.querySelector(`a[data-delete-id="${message.id}"]`).addEventListener('click', event => {
+			messageElement.querySelector(`a[href^="#delete"]`).addEventListener('click', event => {
 				deleteMessage(event.target.parentElement.getAttribute("data-delete-id"));
+                setTimeout(_ => {
+                    location.hash = "";
+                }, 500);
 			});
 		}
 		hljs.highlightAll();
 	}
 
 	async function deleteMessage(id) {
-		console.log("delete", id);
 		var response = await fetch("/chat/delete", {
 			method: "DELETE",
 			headers: {
@@ -117,16 +111,22 @@ function main() {
 		});
         if (response.status == 429) {
                 response = await response.json();
-                document.getElementById("error").textContent = response.message;
-                setTimeout(_ => {
-                    document.getElementById("error").textContent = "";
+                document.getElementById("message").innerHTML = response.message;
+                if (response.color) {
+                    document.getElementById("message").style.color = response.color;
+                }
+                clearTimeout(window.messageTimer || 0);
+                window.messageTimer = setTimeout(_ => {
+                    document.getElementById("message").innerHTML = "";
                 }, 1200);
             }
 	}
 
 	function removeMessage(id) {
 		messagesList = messagesList.filter(message => message.id !== id);
-		document.querySelector(`div[data-message-id="${id}"]`) && document.querySelector(`div[data-message-id="${id}"]`).remove();
+        var message = document.querySelector(`div[data-message-id="${id}"]`);
+        console.log("%cRemoving message: %o", "color: red", message)
+		message && message.remove();
 	}
 
 	function addMessages(messages) {
@@ -158,10 +158,16 @@ function main() {
 		typersLoader.style.display = !!typers.length ? "inline-block" : "none";
 		typersMessage.textContent = typers.length > 1 ? " are typing..." : typers.length == 1 ? " is typing..." : "";
 	}, 200);
-	async function getUsername() {
-		var username = await fetch("./username/");
-		username = await username.json();
-		if (username.error == "logged_out") {
+	async function getInfo() {
+		var info = await fetch("./info/");
+		info = await info.json();
+        var username = info.username;
+        var admin = info.admin;
+        window.info = info;
+        if (!admin) {
+			purgeBtn.remove();
+		}
+		if (!!username.error && username.error == "logged_out") {
 			for (const child of messageGroup.children) {
 				child.classList.add("disabled");
 				child.setAttribute("disabled", "");
@@ -172,20 +178,10 @@ function main() {
 			});
 			window.username = "";
 		} else {
-			username = username.username;
 			window.username = username;
-			document.getElementById("login-register").remove();
+			document.getElementById("login-register").innerHTML = '<li class="nav-item m-2"><a class="btn btn-info btn-sm" href="/logout" role="button">Logout</a></li>';
 		}
 		socket.emit("set username", username);
-		return username;
-	}
-	async function checkAdmin() {
-		var admin = await fetch("./admin/");
-		admin = await admin.json();
-		if (!admin.admin) {
-			purgeBtn.remove();
-		}
-		window.admin = admin.admin;
 	}
 
 	async function sendMessage(content) {
@@ -201,9 +197,13 @@ function main() {
 			});
             if (response.status == 429) {
                 response = await response.json();
-                document.getElementById("error").textContent = response.message;
-                setTimeout(_ => {
-                    document.getElementById("error").textContent = "";
+                document.getElementById("message").innerHTML = response.message;
+                if (response.color) {
+                    document.getElementById("message").style.color = response.color;
+                }
+                clearTimeout(window.messageTimer || 0);
+                window.messageTimer = setTimeout(_ => {
+                    document.getElementById("message").innerHTML = "";
                 }, 1200);
             }
 		}
@@ -247,6 +247,5 @@ function main() {
 	chatBox.style.maxHeight = getComputedStyle(realBox).height;
 	realBox.remove();
 	setTimeout(getMessages, 1500);
-	checkAdmin();
 }
 window.addEventListener("DOMContentLoaded", main);

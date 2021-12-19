@@ -1,0 +1,18 @@
+.center-sm *, .center-sm {
+    text-align: center;
+    flex-direction: column !important;
+}
+
+.center-sm.flex-row-reverse {
+    flex-direction: column-reverse !important;
+}
+
+@media (min-width:992px) {
+    .center-sm *, .center-sm {
+        text-align: unset;
+        flex-direction: row !important;
+    }
+    .center-sm.flex-row-reverse {
+        flex-direction: row-reverse !important;
+    }
+}

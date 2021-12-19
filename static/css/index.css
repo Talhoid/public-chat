@@ -1,5 +1,6 @@
 /* https://ishadeed.com/article/custom-scrollbars-css/ */
 /* Modified a little */
+
 ::-webkit-scrollbar {
     width: 20px;
 }

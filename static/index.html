@@ -6,6 +6,7 @@
 		<meta name="color-scheme" content="dark">
 		<link rel="stylesheet" href="./css/bootstrap-dark/bootstrap-night.min.css" media="all">
         <link href="./css/index.css" rel="stylesheet">
+        <link href="./css/nav.css" rel="stylesheet">
         <link rel="shortcut icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgY2xhc3M9ImJpIGJpLWNoYXQtc3F1YXJlLWRvdHMiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgPHN0eWxlPgogICAgKiB7IGZpbGw6ICMwMDAwMDA7IH0KICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgKiB7IGZpbGw6ICNmZmZmZmY7IH0KICAgIH0KICA8L3N0eWxlPgogIDxwYXRoIGQ9Ik0xNCAxYTEgMSAwIDAgMSAxIDF2OGExIDEgMCAwIDEtMSAxaC0yLjVhMiAyIDAgMCAwLTEuNi44TDggMTQuMzMzIDYuMSAxMS44YTIgMiAwIDAgMC0xLjYtLjhIMmExIDEgMCAwIDEtMS0xVjJhMSAxIDAgMCAxIDEtMWgxMnpNMiAwYTIgMiAwIDAgMC0yIDJ2OGEyIDIgMCAwIDAgMiAyaDIuNWExIDEgMCAwIDEgLjguNGwxLjkgMi41MzNhMSAxIDAgMCAwIDEuNiAwbDEuOS0yLjUzM2ExIDEgMCAwIDEgLjgtLjRIMTRhMiAyIDAgMCAwIDItMlYyYTIgMiAwIDAgMC0yLTJIMnoiLz4KICA8cGF0aCBkPSJNNSA2YTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHptNCAwYTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHptNCAwYTEgMSAwIDEgMS0yIDAgMSAxIDAgMCAxIDIgMHoiLz4KPC9zdmc+">
 		<script defer src="https://tombigel.github.io/detect-zoom/detect-zoom.min.js"></script>
 		<script defer src="./js/index.js"></script>
@@ -21,13 +22,13 @@
 					<a class="navbar-brand mb-2" href="#"><img height="24" src="./assets/ctalhoid.svg"></img></a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
 					<div class="collapse navbar-collapse" id="navbarNav">
-						<ul class="navbar-nav me-auto w-75">
+						<ul class="navbar-nav flex-grow-1 center-sm">
 							<li class="nav-item"> <a class="nav-link active" aria-current="page" href="https://talhoid.ml/">Home</a> </li>
 							<li class="nav-item"> <a class="nav-link disabled" aria-current="page" href="https://chat.talhoid.ml/">Chat</a> </li>
 						</ul>
-						<ul class="navbar-nav float-end" id="login-register">
-							<li class="nav-item mx-2"><a class="btn btn-success btn-sm" href="/login" role="button">Login</a></li>
-							<li class="nav-item mx-2"><a class="btn btn-primary btn-sm" href="/register" role="button">Sign up</a></li>
+						<ul class="navbar-nav flex-grow-1 center-sm flex-row-reverse" id="login-register">
+							<li class="nav-item m-2"><a class="btn btn-outline-dark btn-sm" style="color: var(--bs-light);" href="/register" role="button">Sign up</a></li>
+							<li class="nav-item m-2"><a class="btn btn-primary btn-sm" href="/login" role="button">Login</a></li>
                         </ul>
 					</div>
 				</div>
@@ -57,7 +58,7 @@
                     <span id="username-list" class="fw-bold"></span>
                     <span id="typing-message"></span>
                 </div>
-                <p class="mt-2 text-center" style="color: var(--bs-danger);" id="error"></p>
+                <p class="mt-2 text-center" id="message"></p>
 			</div>
 		</div>
         <div class="modal fade" id="purge-modal" tabindex="-1" aria-labelledby="purge-label" aria-hidden="true">
