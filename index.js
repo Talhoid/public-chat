@@ -171,7 +171,7 @@ app.post("/register", bodyParser.json(), async (req, res, next) => {
 			password
 		} = req.body;
 		username = username.replace(/[^\w\s.,!@#$%^&*()=+~`-]/g, "");
-		if (!(/^[a-zA-Z0-9]{4, 32}$/.test(username))) {
+		if (!(/^[a-zA-Z0-9]{4,32}$/.test(username))) {
 			return res.status(400).json({
 				message: "Username must only contain 0-9, a-z, or hyphen and must be between 4 and 32 characters.",
 				error: "invalid_username"
