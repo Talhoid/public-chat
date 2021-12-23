@@ -17,6 +17,7 @@ const rateLimit = require("express-rate-limit");
 const fingerprint = require('express-fingerprint');
 const osu = require('node-os-utils');
 const url = require('url');
+const ColorHash = require('color-hash').default;
 // const { cpu, drive, mem, netstat, os } = osu;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 app.engine("html", sprightly);
@@ -33,7 +34,8 @@ app.use('/assets', express.static(path.join(__dirname, 'static/assets')))
 app.use(fingerprint({
 	parameters: [
 		fingerprint.useragent,
-		fingerprint.geoip
+		fingerprint.geoip,
+        fingerprint.acceptHeaders
 	]
 }));
 app.use(morgan(function(tokens, req, res) {
@@ -47,7 +49,9 @@ app.use(morgan(function(tokens, req, res) {
 		let range = max - min + 1;
 		return Math.floor(Math.random() * range) + min
 	}
-	return `\x1b[0m${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms\nfingerprint: ${req.fingerprint.hash}\x1b[0m`
+    var colorHash = new ColorHash();
+    var [r, g, b] = colorHash.rgb(req.fingerprint.hash);
+	return `\x1b[0m${req.ip} \ue0b1 ${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms - \x1b[38;2;${r};${g};${b}m${req.fingerprint.hash}\x1b[0m`
 }));
 app.use(helmet({
 	contentSecurityPolicy: false,
@@ -129,7 +133,6 @@ app.get("/logout", (req, res, next) => {
     });
     return res.redirect("/");
 });
-
 // var statsObject = {};
 // statsObject.cpuUsage = await cpu.usage();
 // statsObject.cpuFree = await cpu.free();
@@ -234,10 +237,10 @@ app.get("/chat/messages", (req, res) => {
 	return res.json(db.getMessages());
 });
 app.get("/info", (req, res) => {
-    res.json({
+    return res.json({
         username: req.signedCookies.username || { error: "logged_out" },
         admin: db.checkAdmin(req.signedCookies.username || "")
-    })
+    });
 });
 app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), async (req, res) => {
 	const {
@@ -299,12 +302,16 @@ app.delete("/users/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), asy
 });
 io.on("connection", (socket) => {
 	let usernameSet = false;
-	// when the client emits 'set username', this listens and executes
-	socket.on('set username', (username) => {
+	// when the client emits 'set token', this listens and executes
+	socket.on('set username', async (username) => {
 		if (usernameSet) return;
-		// we store the username in the socket session for this client
-		socket.username = username;
-		usernameSet = true;
+        var user = await db.findUser(username);
+        console.log(username)
+        if (!!user) {
+            socket.username = username;
+		    usernameSet = true;
+            socket.broadcast.emit("user joined", socket.username);
+        }
 	});
 	// when the client emits 'typing', we broadcast it to others
 	socket.on('typing', () => {
@@ -322,6 +329,9 @@ io.on("connection", (socket) => {
 		socket.broadcast.emit('stop typing', {
 			username: socket.username
 		});
+        if (socket.username) {
+            socket.broadcast.emit("user left", socket.username);
+        }
 	});
 	console.log("a user is connected > ", socket.id)
 });

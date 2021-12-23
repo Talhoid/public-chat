@@ -14,6 +14,28 @@
     background: #222 !important;
 }
 
+.fade-in-right, .fade-in-left {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1200ms ease-out, transform 600ms ease-out,
+    visibility 1200ms ease-out;
+  will-change: opacity, transform, visibility;
+}
+
+.fade-in-right {
+    transform: translateX(5vw);
+}
+
+.fade-in-left {
+    transform: translateX(-5vw);
+}
+
+.fade-in-left.is-visible, .fade-in-right.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
 
 ::-webkit-scrollbar-thumb {
     border-radius: 100px;

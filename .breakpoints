@@ -1,3 +1,12 @@
 {
-  "files": {}
+  "files": {
+    "static/register.html": [
+      {
+        "id": "49144cbf-dc13-4bd2-a869-3c798e555015",
+        "line": 20,
+        "version": 528,
+        "index": 2709
+      }
+    ]
+  }
 }
