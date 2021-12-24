@@ -48,7 +48,7 @@ class Database {
             this.database.data.users = [];
             await this.database.write();
         }
-        return this.database.data.users.find(user => user.username === username);
+        return this.database.data.users.find(user => user.username.toLowerCase() === username);
     }
 
     findMessage(id) {
@@ -104,12 +104,11 @@ class Database {
     }
 
     checkAdmin(username) {
-        return this.database.data.admins.indexOf(username) > -1;
+        return !!~this.database.data.admins.indexOf(username);
     }
     
-    checkDev(username) {
-        
-        return this.database.data.devs.indexOf(username) > -1;
+    checkDev(username) {  
+        return !!~this.database.data.devs.indexOf(username);
     }
 }
 

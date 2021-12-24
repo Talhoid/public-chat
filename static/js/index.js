@@ -11,8 +11,8 @@ function main() {
 	var typers = [];
 	var purgeBtn = document.getElementById("button-purge");
 	var purgeSubmit = document.getElementById("purge-submit");
-    var purgeModal = document.getElementById("purge-modal");
-    window.messagesLoaded = false;
+	var purgeModal = document.getElementById("purge-modal");
+	window.messagesLoaded = false;
 	purgeSubmit.addEventListener("click", event => {
 		purge(purgeModal.querySelector('.modal-body').querySelector("select").value);
 	});
@@ -20,31 +20,31 @@ function main() {
 	const TYPING_TIMER_LENGTH = 1400;
 	getInfo();
 
-    Element.prototype.slideUp = function (duration=500) {
-        this.style.transitionProperty = 'height, margin, padding';
-        this.style.transitionDuration = duration + 'ms';
-        this.style.boxSizing = 'border-box';
-        this.style.height = this.offsetHeight + 'px';
-        this.offsetHeight;
-        this.style.overflow = 'hidden';
-        this.style.height = 0;
-        this.style.paddingTop = 0;
-        this.style.paddingBottom = 0;
-        this.style.marginTop = 0;
-        this.style.marginBottom = 0;
-        window.setTimeout( () => {
-                this.style.display = 'none';
-                this.style.removeProperty('height');
-                this.style.removeProperty('padding-top');
-                this.style.removeProperty('padding-bottom');
-                this.style.removeProperty('margin-top');
-                this.style.removeProperty('margin-bottom');
-                this.style.removeProperty('overflow');
-                this.style.removeProperty('transition-duration');
-                this.style.removeProperty('transition-property');
-                //alert("!");
-        }, duration);
-    };
+	Element.prototype.slideUp = function(duration = 500) {
+		this.style.transitionProperty = 'height, margin, padding';
+		this.style.transitionDuration = duration + 'ms';
+		this.style.boxSizing = 'border-box';
+		this.style.height = this.offsetHeight + 'px';
+		this.offsetHeight;
+		this.style.overflow = 'hidden';
+		this.style.height = 0;
+		this.style.paddingTop = 0;
+		this.style.paddingBottom = 0;
+		this.style.marginTop = 0;
+		this.style.marginBottom = 0;
+		window.setTimeout(() => {
+			this.style.display = 'none';
+			this.style.removeProperty('height');
+			this.style.removeProperty('padding-top');
+			this.style.removeProperty('padding-bottom');
+			this.style.removeProperty('margin-top');
+			this.style.removeProperty('margin-bottom');
+			this.style.removeProperty('overflow');
+			this.style.removeProperty('transition-duration');
+			this.style.removeProperty('transition-property');
+			//alert("!");
+		}, duration);
+	};
 
 	function purge(type) {
 		switch (type) {
@@ -62,8 +62,8 @@ function main() {
 					body: JSON.stringify({})
 				});
 				break;
-            default:
-                break;
+			default:
+				break;
 		}
 	}
 	String.prototype.toDOM = function() {
@@ -77,15 +77,15 @@ function main() {
 		return b;
 	};
 
-    // titleSwitch(2000, "project number", "0x01 • ctalhoid")
-    // function titleSwitch(time, ...titles) {
-    //     titles.forEach((title, index) => {
-    //         setInterval(setTitle, time * (index + 1), title);
-    //     });
-    //     function setTitle(title) {
-    //         document.title = title;
-    //     }
-    // }
+	// titleSwitch(2000, "project number", "0x01 • ctalhoid")
+	// function titleSwitch(time, ...titles) {
+	//     titles.forEach((title, index) => {
+	//         setInterval(setTitle, time * (index + 1), title);
+	//     });
+	//     function setTitle(title) {
+	//         document.title = title;
+	//     }
+	// }
 
 	function updateTyping() {
 		if (!isTyping) {
@@ -103,13 +103,13 @@ function main() {
 		}, TYPING_TIMER_LENGTH);
 	}
 
-    Element.prototype.appendFragment = function (fragment) {
-        var children = fragment.children.length == 1 ? fragment.children[0] : fragment.children;
-        while (fragment.firstChild) {
-            this.appendChild(fragment.firstChild);
-        }
-        return children;
-    }
+	Element.prototype.appendFragment = function(fragment) {
+		var children = fragment.children.length == 1 ? fragment.children[0] : fragment.children;
+		while (fragment.firstChild) {
+			this.appendChild(fragment.firstChild);
+		}
+		return children;
+	}
 
 	function addMessage(message, index) {
 		messagesList.push(message);
@@ -127,19 +127,19 @@ function main() {
 	</div>
 </div>`;
 		var messageElement = htmlString.toDOM();
-        messageElement = chatBox.appendFragment(messageElement);
+		messageElement = chatBox.appendFragment(messageElement);
 		console.log("%cAdded message: %o", "color: limegreen", messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        setTimeout(function () {
-            messageElement.classList.add("is-visible");
-        }, 600 * (1 / (index + 1)));
+		chatBox.scrollTop = chatBox.scrollHeight;
+		setTimeout(function() {
+			messageElement.classList.add("is-visible");
+		}, 600 * (1 / (index + 1)));
 
 		if (message.username == username || window.admin) {
 			messageElement.querySelector(`a[href^="#delete"]`).addEventListener('click', event => {
 				deleteMessage(event.target.parentElement.getAttribute("href").split("#delete-")[1]);
-                setTimeout(_ => {
-                    location.hash = "";
-                }, 500);
+				setTimeout(_ => {
+					location.hash = "";
+				}, 500);
 			});
 		}
 		hljs.highlightAll();
@@ -155,31 +155,33 @@ function main() {
 				id: id
 			})
 		});
-        if (response.status == 429) {
-                response = await response.json();
-                document.getElementById("message").innerHTML = response.message;
-                if (response.color) {
-                    document.getElementById("message").style.color = response.color;
-                }
-                clearTimeout(window.messageTimer || 0);
-                window.messageTimer = setTimeout(_ => {
-                    document.getElementById("message").innerHTML = "";
-                }, 1200);
-            }
+		if (response.status == 429) {
+			response = await response.json();
+			document.getElementById("message").innerHTML = response.message;
+			if (response.color) {
+				document.getElementById("message").style.color = response.color;
+			}
+			clearTimeout(window.messageTimer || 0);
+			window.messageTimer = setTimeout(_ => {
+				document.getElementById("message").innerHTML = "";
+			}, 1200);
+		}
 	}
 
 	function removeMessage(id) {
 		messagesList = messagesList.filter(message => message.id !== id);
-        var message = document.querySelector(`div[data-id="${id}"]`);
-        message.classList.remove("is-visible");
-        message.style.visibility = "hidden";
-        message.style.display = "block";
-        message.slideUp.bind(message, 600)();
-        setTimeout( _ => {
-            console.log("%cRemoving message: %o", "color: red", message)
-            message && message.remove();
-            !window.messagesList.length && (_ => {document.getElementById("nothing-to-see").style.display = "block"})();
-        }, 1200);
+		var message = document.querySelector(`div[data-id="${id}"]`);
+		message.classList.remove("is-visible");
+		message.style.visibility = "hidden";
+		message.style.display = "block";
+		message.slideUp.bind(message, 600)();
+		setTimeout(_ => {
+			console.log("%cRemoving message: %o", "color: red", message)
+			message && message.remove();
+			!window.messagesList.length && (_ => {
+				document.getElementById("nothing-to-see").style.display = "block"
+			})();
+		}, 1200);
 	}
 
 	function addMessages(messages) {
@@ -193,7 +195,7 @@ function main() {
 			document.getElementById("nothing-to-see").style.display = "block";
 		}
 		addMessages(messages);
-        window.messagesLoaded = true;
+		window.messagesLoaded = true;
 		chatBox.scrollTop = chatBox.scrollHeight;
 	}
 
@@ -215,14 +217,14 @@ function main() {
 	async function getInfo() {
 		var info = await fetch("./info/");
 		info = await info.json();
-        var username = info.username;
-        window.admin = info.admin;
-        window.info = info;
-        if (!admin) {
+		var username = info.username;
+		window.admin = info.admin;
+		window.info = info;
+		if (!admin) {
 			purgeBtn.remove();
 		}
 		if (username.error && username.error == "logged_out") {
-            for (const child of messageGroup.children) {
+			for (const child of messageGroup.children) {
 				child.classList.add("disabled");
 				child.setAttribute("disabled", "");
 			}
@@ -233,7 +235,7 @@ function main() {
 			window.username = "";
 		} else {
 			window.username = username;
-            socket.emit("set username", username);
+			socket.emit("set username", username);
 			document.getElementById("login-register").innerHTML = '<li class="nav-item m-2"><a class="btn btn-info btn-sm" href="/logout" role="button">Logout</a></li>';
 		}
 	}
@@ -249,17 +251,17 @@ function main() {
 					content: content,
 				})
 			});
-            if (response.status == 429) {
-                response = await response.json();
-                document.getElementById("message").innerHTML = response.message;
-                if (response.color) {
-                    document.getElementById("message").style.color = response.color;
-                }
-                clearTimeout(window.messageTimer || 0);
-                window.messageTimer = setTimeout(_ => {
-                    document.getElementById("message").innerHTML = "";
-                }, 1200);
-            }
+			if (response.status == 429) {
+				response = await response.json();
+				document.getElementById("message").innerHTML = response.message;
+				if (response.color) {
+					document.getElementById("message").style.color = response.color;
+				}
+				clearTimeout(window.messageTimer || 0);
+				window.messageTimer = setTimeout(_ => {
+					document.getElementById("message").innerHTML = "";
+				}, 1200);
+			}
 		}
 	}
 	input.addEventListener("keydown", (event) => {
@@ -278,12 +280,13 @@ function main() {
 			}, 200);
 		}
 	});
-    function userJoined(username) {
-        if (!window.messagesLoaded) {
-            setTimeout(userJoined, 1, username);
-        } else {
-            if (!(username == window.info.username))
-                var htmlString = `<div class="message fade-in-left w-100 float-start">
+
+	function userJoined(username) {
+		if (!window.messagesLoaded) {
+			setTimeout(userJoined, 1, username);
+		} else {
+			if (!(username == window.info.username))
+				var htmlString = `<div class="message fade-in-left w-100 float-start">
             <div class="border my-1 rounded-3 border-success bg-opacity-50" style="width: fit-content; max-width: 400px;">
                 <div class="my-2 mx-4">
                     <strong>
@@ -294,17 +297,17 @@ function main() {
                 </div>
             </div>
         </div>`;
-                var joinedMessageElement = htmlString.toDOM();
-                joinedMessageElement = chatBox.appendFragment(joinedMessageElement);
-                setTimeout(_ => {
-                    joinedMessageElement.classList.add("is-visible");
-                }, 600);
-            }
-        }
-    }
-    function userLeft(username) {
-        if (!(username == window.info.username)) {
-            var htmlString = `<div class="message fade-in-left w-100 float-start">
+			var joinedMessageElement = htmlString.toDOM();
+			joinedMessageElement = chatBox.appendFragment(joinedMessageElement);
+			setTimeout(_ => {
+				joinedMessageElement.classList.add("is-visible");
+			}, 600);
+		}
+	}
+
+	function userLeft(username) {
+		if (!(username == window.info.username)) {
+			var htmlString = `<div class="message fade-in-left w-100 float-start">
         <div class="border my-1 rounded-3 border-danger bg-opacity-50" style="width: fit-content; max-width: 400px;">
             <div class="my-2 mx-4">
                 <strong>
@@ -315,19 +318,19 @@ function main() {
             </div>
         </div>
     </div>`;
-            var leftMessageElement = htmlString.toDOM();
-            leftMessageElement = chatBox.appendFragment(leftMessageElement);
-            setTimeout(_ => {
-                leftMessageElement.classList.add("is-visible");
-            }, 600);
-        }
-    }
+			var leftMessageElement = htmlString.toDOM();
+			leftMessageElement = chatBox.appendFragment(leftMessageElement);
+			setTimeout(_ => {
+				leftMessageElement.classList.add("is-visible");
+			}, 600);
+		}
+	}
 	socket.on("message", addMessage);
 	socket.on("message remove", removeMessage);
 	socket.on("typing", addTyping);
 	socket.on("stop typing", removeTyping);
-    socket.on("user left", userLeft);
-    socket.on("user joined", userJoined);
+	socket.on("user left", userLeft);
+	socket.on("user joined", userJoined);
 	setInterval(function() {
 		var zoom = detectZoom.device().toFixed(2);
 		// console.info("Zoom: " + detectZoom.device().toFixed(2).toString())
