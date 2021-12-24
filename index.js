@@ -24,7 +24,7 @@ app.engine("html", sprightly);
 app.set("view engine", "html");
 app.set("views", "static");
 app.set("json spaces", 2);
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 app.use(timeout(5000));
 app.use(haltOnTimedout);
 app.use('/css/bootstrap-dark', express.static(path.join(__dirname, 'node_modules/bootstrap-dark-5/dist/css')))
