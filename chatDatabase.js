@@ -23,7 +23,6 @@ class Database {
 
 
     async addUser(userObj) {
-        
         userObj.id = crypto.randomBytes(16).toString("hex");
         if (!!this.database.data.users) {
             this.database.data.users.push(userObj);
@@ -122,11 +121,6 @@ async function connect(databasePath) {
     return finalDatabase;
 }
 
-function save() {
-    
-}
-
 module.exports = {
-    connect: connect,
-    save: save
+    connect: connect
 };

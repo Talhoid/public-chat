@@ -28,9 +28,9 @@ app.set("trust proxy", true);
 app.use(timeout(5000));
 app.use(haltOnTimedout);
 app.use('/css/bootstrap-dark', express.static(path.join(__dirname, 'node_modules/bootstrap-dark-5/dist/css')))
-app.use('/css', express.static(path.join(__dirname, 'static/css')))
-app.use('/js', express.static(path.join(__dirname, 'static/js')))
-app.use('/assets', express.static(path.join(__dirname, 'static/assets')))
+app.use('/', express.static(path.join(__dirname, 'static'), {
+    extensions: ["html"]
+}));
 app.use(fingerprint({
 	parameters: [
 		fingerprint.useragent,
@@ -316,7 +316,7 @@ app.delete("/users/purge", auth.verifyToken, verifyAdmin, bodyParser.json(), asy
 });
 io.on("connection", (socket) => {
 	let usernameSet = false;
-	// when the client emits 'set token', this listens and executes
+	// when the client emits 'set username', this listens and executes
 	socket.on('set username', async (username) => {
 		if (usernameSet) return;
         var user = await db.findUser(username);

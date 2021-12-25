@@ -1,4 +1,3 @@
-'use strict';
 function main() {
     window.focused = true;
     window.onfocus = () => {window.focused = true};
@@ -16,6 +15,7 @@ function main() {
 	var purgeBtn = document.getElementById("button-purge");
 	var purgeSubmit = document.getElementById("purge-submit");
 	var purgeModal = document.getElementById("purge-modal");
+    var lastTypingTime;
 	window.messagesLoaded = false;
 	purgeSubmit.addEventListener("click", event => {
 		purge(purgeModal.querySelector('.modal-body').querySelector("select").value);
