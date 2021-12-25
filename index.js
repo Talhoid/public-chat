@@ -51,7 +51,7 @@ app.use(morgan(function(tokens, req, res) {
 	}
     var colorHash = new ColorHash();
     var [r, g, b] = colorHash.rgb(req.fingerprint.hash);
-	return `\x1b[0m${req.ip} \ue0b1 ${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms - \x1b[38;2;${r};${g};${b}m${req.fingerprint.hash}\x1b[0m`
+	return `\x1b[0m${req.ip} || ${tokens.method(req, res)} ${tokens.url(req, res)} \x1b[${color}m${status}\x1b[0m ${tokens.res(req, res, 'content-length')} - ${tokens['response-time'](req, res)}ms - \x1b[38;2;${r};${g};${b}m${req.fingerprint.hash}\x1b[0m`
 }));
 app.use(helmet({
 	contentSecurityPolicy: false,
@@ -259,6 +259,14 @@ app.post("/chat/add", auth.verifyToken, limiter, bodyParser.json(), async (req, 
 			username: req.signedCookies.username
 		});
 		io.emit("message", message);
+        io.emit("notification", {
+            title: message.username,
+            opts: {
+                body: message.content,
+                icon: '/assets/images/favicon.png',
+                onClick: new Function("window.focus(); this.close();")
+            }
+        });
 		return res.json(message);
 	} else if (!(!!content && /^(?!\s*$).+/g.test(content))) {
 		return res.status(400).json({

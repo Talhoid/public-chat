@@ -1,4 +1,8 @@
+'use strict';
 function main() {
+    window.focused = true;
+    window.onfocus = () => {window.focused = true};
+    window.onblur = () => {window.focused = false};
 	var chatBox = document.querySelector(".chat-box");
 	var socket = io();
 	var input = document.getElementById("send-messages").children[0];
@@ -19,7 +23,6 @@ function main() {
 	window.messagesList = [];
 	const TYPING_TIMER_LENGTH = 1400;
 	getInfo();
-
 	Element.prototype.slideUp = function(duration = 500) {
 		this.style.transitionProperty = 'height, margin, padding';
 		this.style.transitionDuration = duration + 'ms';
@@ -110,6 +113,7 @@ function main() {
 		}
 		return children;
 	}
+
 
 	function addMessage(message, index) {
 		messagesList.push(message);
@@ -325,12 +329,21 @@ function main() {
 			}, 600);
 		}
 	}
+
+    function showNotification(notification) {
+        console.log("Notification: ", notification);
+        if (!window.focused) {
+            Push.create(notification.title, notification.opts);
+        }
+    }
+
 	socket.on("message", addMessage);
 	socket.on("message remove", removeMessage);
 	socket.on("typing", addTyping);
 	socket.on("stop typing", removeTyping);
 	socket.on("user left", userLeft);
 	socket.on("user joined", userJoined);
+    socket.on("notification", showNotification);
 	setInterval(function() {
 		var zoom = detectZoom.device().toFixed(2);
 		// console.info("Zoom: " + detectZoom.device().toFixed(2).toString())
