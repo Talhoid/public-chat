@@ -22,7 +22,7 @@
         "connect-timeout": "*",
         "cookie-parser": "*",
         "discord-markdown": "*",
-        "ejs": "*",
+        "ejs": "3.1.7",
         "express": "*",
         "express-fingerprint": "*",
         "express-rate-limit": "*",
